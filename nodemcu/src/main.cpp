@@ -28,14 +28,16 @@ const int ledPin = D4;
 const int lightPin = A0;
 bool ledStatus;
 
-const size_t numberOfUnits{3};
+const bool debug = true; 
+
+const size_t numberOfUnits{9};
 size_t unitsId[numberOfUnits];
 String unitsProductName[numberOfUnits];
 long unitsProductPrice[numberOfUnits];
 
 boolean connectWifi(); // connect to wifi – returns true if successful or false if not
 String httpCommunication(const String &uri, const String &body = "");
-void handleWireResponse(char buffer[]);
+bool WireRequest(char buffer[], const char command);
 void readCommands();
 void readUnits();
 void updateUnits();
@@ -119,29 +121,36 @@ String httpCommunication(const String &uri, const String &body)
 	HTTPClient http;
 	int httpCode;
 	String response;
-	Serial.printf("Connecting to: %s%s\n", host, uri.c_str());
+	if(debug)
+		Serial.printf("Connecting to: %s%s\n", host, uri.c_str());
 	http.begin(wifi, host, port, uri);
 
 	if (body == "") // Send Get Request
 	{
 		httpCode = http.GET();
-		Serial.print("Get -> ");
+		if (debug)
+			Serial.print("Get -> ");
 	}
 	else // Send Post Request
 	{
 		http.addHeader("Content-Type", "application/json");
 		httpCode = http.POST(body);
-		Serial.print("Post -> ");
+		if (debug)
+			Serial.print("Post -> ");
 	}
 
 	if (httpCode > 0) // HTTP header has been send and Server response header has been handled
 	{
-		Serial.printf("code: %d\n", httpCode);
+		if(debug)
+			Serial.printf("code: %d\n", httpCode);
 		if (httpCode == HTTP_CODE_OK) // file found at server
 		{
 			response = http.getString();
-			Serial.println("response:");
-			Serial.println(response);
+			if (debug)
+			{
+				Serial.println("response:");
+				Serial.println(response);
+			}
 		}
 	}
 	else
@@ -150,27 +159,39 @@ String httpCommunication(const String &uri, const String &body)
 	return response;
 }
 
-void handleWireResponse(char buffer[])
+bool WireRequest(char buffer[], const char command)
 {	
+	bool success = false;
+	Wire.beginTransmission(I2C_SLAVE);
+	Wire.write(command);
+	Wire.endTransmission();
+	Wire.requestFrom(I2C_SLAVE, I2C_BUFFER_LENGHT);
 	size_t index{};
 	while (Wire.available())
 	{
 		char x = Wire.read();
 		buffer[index++] = x;
 	}
-	Serial.print("buffer: ");
-	Serial.println(buffer);
+	if(buffer[0] == '{')
+		success = true;
+	if(debug)
+	{
+		Serial.print("buffer: ");
+		Serial.println(buffer);
+	}
+	return success;
 }
 
 void readUnits()
 {
-	Serial.println(">>>>>>>>> Read Units ");
+	if(debug)
+		Serial.println(">>>>>>>>> Read Units ");
 	const String uri{"/api/read_units1.php"};
 	String response = httpCommunication(uri);
 	if (response == "")
 		return;
 
-	const size_t capacity = 512;
+	const size_t capacity = 2048;
 	StaticJsonDocument<capacity> doc;
 
 	DeserializationError error = deserializeJson(doc, response);
@@ -189,34 +210,14 @@ void readUnits()
 		Wire.endTransmission();
 	}
 
-	// for (size_t i = 0; i < numberOfUnits; i++)
-	// {
-	// 	int id{doc["units"][i]["id"].as<int>()};
-	// 	String name{doc["units"][i]["name"].as<char *>()};
-	// 	long price{doc["units"][i]["price"].as<long>()};
-	// 	// String msg = String("id: ") + String(id) + String("   name :") + name + String("   price :") + price;
-	// 	// Serial.println(msg);
-		
-	// 	if(name != unitsProductName[i] || price!= unitsProductPrice[i])
-	// 	{
-	// 		Serial.print(name);
-	// 		Serial.println(" was changed");
-	// 		unitsId[i] = id;
-	// 		unitsProductName[i] = name;
-	// 		unitsProductPrice[i] = price;
-
-	// 		Wire.beginTransmission(I2C_SLAVE);
-	// 		Wire.write('p');
-	// 		serializeJson(doc["units"][i], Wire);
-	// 		Wire.endTransmission();
-	// 	}
-	// }
-	Serial.println(" Read Units <<<<<<<<<");
+	if(debug)
+		Serial.println(" Read Units <<<<<<<<<");
 }
 
 void readCommands()
 {
-	Serial.println(">>>>>>>>> Read Commands ");
+	if(debug)
+		Serial.println(">>>>>>>>> Read Commands ");
 	String uri{"/api/read_commands.php"};
 	String response = httpCommunication(uri);
 	if (response == "")
@@ -245,35 +246,37 @@ void readCommands()
 	doc["l1"] = lamp1Status == "1" ? 1 : 0;
 	doc["l2"] = lamp2Status == "1" ? 1 : 0;
 	doc["b"] = buzzerStatus == "1" ? 1 : 0;
-	serializeJson(doc, Serial);
 	Wire.beginTransmission(I2C_SLAVE);
 	Wire.write('c');
 	serializeJson(doc, Wire);
 	Wire.endTransmission();
-	Serial.println(" Read Commands <<<<<<<<<");
+	if(debug)
+		Serial.println(" Read Commands <<<<<<<<<");
 }
 
 void updateUnits()
 {
-	Serial.println(">>>>>>>>> Update Units ");
-	Wire.beginTransmission(I2C_SLAVE);
-	Wire.write('u');
-	Wire.endTransmission();
-	Wire.requestFrom(I2C_SLAVE, I2C_BUFFER_LENGHT);
+	if(debug)
+		Serial.println(">>>>>>>>> Update Units ");
 	char buffer[I2C_BUFFER_LENGHT];
-	handleWireResponse(buffer);
+	if(!WireRequest(buffer, 'u'))
+	{
+		Serial.println("Error getting information from Arduino");
+		return;
+	}
 	String uri{"/api/update_units.php"};
 	String response = httpCommunication(uri, buffer);
 
 	if (response == "")
 	return;
-	Serial.println(" Update Units <<<<<<<<<");
+	if(debug)
+		Serial.println(" Update Units <<<<<<<<<");
 }
-
 
 void updateAmbient()
 {
-	Serial.println(">>>>>>>>> Update Ambient ");
+	if(debug)
+		Serial.println(">>>>>>>>> Update Ambient ");
 	// Serial.println(dht.getMinimumSamplingPeriod());
 
 	float humidity = dht.getHumidity();;
@@ -302,5 +305,6 @@ void updateAmbient()
 
 	if (response == "")
 	return;
-	Serial.println(" Update Ambient <<<<<<<<<");
+	if(debug)
+		Serial.println(" Update Ambient <<<<<<<<<");
 }

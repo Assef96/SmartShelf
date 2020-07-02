@@ -52,7 +52,7 @@ function load_shelf() {
     $.getJSON(url, function(response) {
         for (let index = 0; index < response["units"].length; index++) {
             const product = response["units"][index];
-            $("#product_name".concat(product["id"])).html(product["name"]);
+            $("#product_name".concat(product["id"])).html(product["name"].concat(product["status"]));
             $("#product_image".concat(product["id"])).attr("src", "img/".concat(product["image"]));
             $("#product_image".concat(product["id"])).attr("alt", product["name"]);
             if (product["status"] == 0) {

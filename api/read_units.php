@@ -11,7 +11,7 @@ require_once("db_connect.php");
 
 $sql = "SELECT units.id, units.status, products.name, products.price, products.image
         FROM units
-        INNER JOIN products ON units.product_id=products.id LIMIT 3";
+        INNER JOIN products ON units.product_id=products.id";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 
 

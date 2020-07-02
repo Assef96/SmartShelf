@@ -11,7 +11,7 @@ require_once("db_connect.php");
 
 $sql = "SELECT units.id, products.name, products.price
         FROM units
-        INNER JOIN products ON units.product_id=products.id LIMIT 3";
+        INNER JOIN products ON units.product_id=products.id";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 
 
@@ -24,7 +24,6 @@ if (mysqli_num_rows($result) > 0) {
     while ($row = mysqli_fetch_array($result)) {
         $unit = array();
         $unit["id"] = $row["id"];
-        // $unit["status"] = $row["status"]; 
         $unit["name"] = $row["name"];
         $unit["price"] = intval($row["price"]);
         array_push($response["units"], $unit);

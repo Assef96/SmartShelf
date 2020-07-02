@@ -22,26 +22,41 @@ const unsigned long postingInterval = 2L * 1000L; // delay between updates, in m
 
 bool ledStatus;
 const int ledPin = LED_BUILTIN;
+const int lcdPinSDA = 2;
+const int lcdPinSCK = 3;
+const int buzzerPin = 4;
 const int trigPin = 5;
 const int echoPin = 6;
-const int unitsPin[3] = {8, 9, 10};
+const int unitsPin[3] = {8, 9, 10}; //
 const int lamp1Pin = 11;
 const int lamp2Pin = 12;
-const int photoPin = A0;
+const int photo1Pin = A0;
+const int photo2Pin = A1;
+const int irReceiver1Pin = A2;
+const int irReceiver2Pin = A3;
+// const int sdaPin = A4;
+// const int sckPin = A5;
+
 bool photoPinLastStatus;
-bool unitsLastStatus[3] = {false, false, false};
-const size_t numberOfUnits{3};
+const size_t numberOfUnits{9};
+int unitsStatus[numberOfUnits];
+int unitsLastStatus[numberOfUnits];
 size_t unitsId[numberOfUnits];
 String unitsProductName[numberOfUnits];
 long unitsProductPrice[numberOfUnits];
+
+const bool debug = false;
+bool FirstTime = true;
+bool buzzerOn = false;
 
 void receiveEvent(int numBytes);
 void requestEvent();
 void sendResponse(char buffer[]);
 void handleRequests();
-void readCommands(char buffer[], size_t size);
-void updateUnits(char buffer[], const size_t &bufferSize);
-void readUnits(char buffer[], size_t size);
+void readCommands(DynamicJsonDocument& doc);
+void updateUnits();
+void readUnits(DynamicJsonDocument& doc);
+void updateUnitsStatus();
 int detectChangedUnit();
 void displayChangedUnit();
 
@@ -49,14 +64,12 @@ void setup()
 {
 	Serial.begin(9600);
 
-
-
-	lcd.init(&WireS1, 2, 3);
+	lcd.init(&WireS1, lcdPinSDA, lcdPinSCK);
 	lcd.backlight();
 	lcd.setCursor(0, 0); // Set the cursor on the first column and first row.
-	lcd.print(F("Hello World!")); // Print the string "Hello World!"
-	lcd.setCursor(2, 1); //Set the cursor on the third column and the second row (counting starts at 0!).
-	lcd.print(F("LCD tutorial"));
+	lcd.print(F("$ Smart  Shelf $")); // Print the string "Hello World!"
+	lcd.setCursor(0, 1); //Set the cursor on the third column and the second row (counting starts at 0!).
+	lcd.print(F(" Enjoy Shopping "));
 
 	Wire.begin(I2C_SLAVE);
 	Wire.onReceive(receiveEvent);
@@ -67,6 +80,7 @@ void setup()
 		pinMode(unitsPin[i], INPUT_PULLUP);
 	}
 	
+	pinMode(buzzerPin, OUTPUT);
 	pinMode(ledPin, OUTPUT);
 	pinMode(lamp1Pin, OUTPUT);
 	pinMode(lamp2Pin, OUTPUT);
@@ -83,24 +97,26 @@ void loop()
 		lastConnectionTime = millis();
 		ledStatus = !ledStatus;
 		digitalWrite(ledPin, ledStatus);
+		displayChangedUnit();
 
 		Serial.println(F("--------- End of Loop ---------"));
 	}
-	
-
-	displayChangedUnit();
-	delay(200);
 }
 
 void receiveEvent(int numBytes)
 {
-	Serial.print(F("Incoming Event"));
-	Serial.print(F("  ->  howMany: "));
-	Serial.print(numBytes);
+	if (debug)
+	{
+		Serial.print(F("Incoming Event"));
+		Serial.print(F("  ->  howMany: "));
+		Serial.print(numBytes);
+	}
 	command = Wire.read(); // receive byte as a character
-	Serial.print(F("  ->  command: "));
-	Serial.println(command);
-
+	if (debug)
+	{
+		Serial.print(F("  ->  command: "));
+		Serial.println(command);
+	}
 	if (numBytes > 1)
 	{
 		char buffer[I2C_BUFFER_LENGHT];
@@ -111,15 +127,28 @@ void receiveEvent(int numBytes)
 			buffer[index++] = x;
 		}
 		buffer[index] = '\0';
-		Serial.print(F("input buffer: "));
-		Serial.println(buffer);
+		if (debug)
+		{
+			Serial.print(F("input buffer: "));
+			Serial.println(buffer);
+		}
+		const size_t capacity = JSON_OBJECT_SIZE(3) + 30;
+		DynamicJsonDocument doc(capacity);
+		DeserializationError error = deserializeJson(doc, buffer, index);
+		if (error)
+		{
+			Serial.print(F("deserializeJson() failed: "));
+			Serial.println(error.c_str());
+			return;
+		}
+		
 		switch (command)
 		{
 		case 'c':
-			readCommands(buffer, index);
+			readCommands(doc);
 			break;
 		case 'p':
-			readUnits(buffer, index);
+			readUnits(doc);
 		default:
 			break;
 		}
@@ -128,15 +157,13 @@ void receiveEvent(int numBytes)
 
 void requestEvent()
 {
-	Serial.println(F("Incoming Request"));
-	char buffer[I2C_BUFFER_LENGHT];
-	size_t index{};
+	if (debug)
+		Serial.println(F("Incoming Request"));
 	switch (command)
 	{
 
 	case 'u':
-		updateUnits(buffer, index);
-		sendResponse(buffer);
+		updateUnits();
 	default:
 		break;
 	}
@@ -144,7 +171,12 @@ void requestEvent()
 
 void sendResponse(char buffer[])
 {
-	Serial.print(F("output buffer: "));
+	if (debug)
+	{
+		Serial.print(F("output buffer: "));
+		Serial.println(buffer);
+	}
+	
 	bool endOfResponse = false;
 	for (size_t i = 0; i < I2C_BUFFER_LENGHT; i++)
 	{
@@ -154,72 +186,44 @@ void sendResponse(char buffer[])
 		if (endOfResponse)
 			Wire.write('\0');
 		else
-		{
 			Wire.write(ch);
-			Serial.print(ch);
-		}
 	}
-	Serial.println();
 }
 
-void readCommands(char buffer[], size_t bufferSize)
+void readCommands(DynamicJsonDocument& doc)
 {
-	const size_t capacity = 100;
-	DynamicJsonDocument doc(capacity);
-	DeserializationError error = deserializeJson(doc, buffer, bufferSize);
-	if (error)
-	{
-		Serial.print(F("deserializeJson() failed: "));
-		Serial.println(error.c_str());
-		return;
-	}
 	int lamp1Status{doc["l1"].as<int>()};
 	int lamp2Status{doc["l2"].as<int>()};
-	// int buzzerStatus{doc["b"].as<int>()};
+	buzzerOn = doc["b"].as<int>();
 	digitalWrite(lamp1Pin, !lamp1Status);
 	digitalWrite(lamp2Pin, !lamp2Status);
 }
 
-void readUnits(char buffer[], size_t bufferSize)
+void readUnits(DynamicJsonDocument& doc)
 {
-	// Serial.println("reading units");
-	const size_t capacity = JSON_OBJECT_SIZE(3) + 30;
-	DynamicJsonDocument doc(capacity);
-	DeserializationError error = deserializeJson(doc, buffer, bufferSize);
-	if (error)
-	{
-		Serial.print(F("deserializeJson() failed: "));
-		Serial.println(error.c_str());
-		return;
-	}
 	int index{doc["id"].as<int>() - 1};
 	String name{doc["name"].as<char *>()};
 	long price{doc["price"].as<long>()};
-	String msg = String("index: ") + String(index) + String("   name :") + name + String("   price :") + price;
-	Serial.println(msg);
 	unitsProductName[index] = name;
 	unitsProductPrice[index] = price;
 }
 
-void updateUnits(char buffer[], const size_t &size)
+void updateUnits()
 {
+	char buffer[I2C_BUFFER_LENGHT];
 	const size_t capacity = JSON_OBJECT_SIZE(9) + 50;
 	DynamicJsonDocument doc(capacity);
 	for (size_t i = 0; i < numberOfUnits; i++)
-	{
-		bool status = unitsLastStatus[i];
-		doc[String(i + 1)] = status == true ? 1 : 0;
-	}
+		doc[String(i + 1)] = unitsLastStatus[i];
 	serializeJson(doc, buffer, I2C_BUFFER_LENGHT);
+	sendResponse(buffer);
 }
 
-int detectChangedUnit()
+void updateUnitsStatus()
 {
-
 	// defines variables
 	long duration;
 	int distance;
-
 	// Clears the trigPin
 	digitalWrite(trigPin, LOW);
 	delayMicroseconds(2);
@@ -235,6 +239,17 @@ int detectChangedUnit()
 	Serial.print("Distance: ");
 	Serial.println(distance);
 
+	Serial.print("IR Value 1 : ");
+	int irValue1 = analogRead(irReceiver1Pin);
+	Serial.println(irValue1);
+	unitsStatus[7] = irValue1 < 700 ? true : false;
+
+	Serial.print("IR Value 2 : ");
+	int irValue2 = analogRead(irReceiver2Pin);
+	Serial.println(irValue2);
+	unitsStatus[8] = irValue2 < 700 ? true : false;
+
+
 	
 	// 	float h = 35;
 	// 	float t = 22;
@@ -244,21 +259,23 @@ int detectChangedUnit()
 	// 		Serial.println(F("Failed to read from DHT sensor!"));
 	// 		return;
 	// 	}
-	int unitIndex{}; // + for putting down and - for picking up
-	bool unitsStatus[3];
-	for (size_t i = 0; i < 2; i++)
-	{
-		if(i < 2)
-		{
-			unitsStatus[i] = digitalRead(unitsPin[i]);
-		}
-		if(i == 2)
-		{
-			int photoValue = analogRead(A0);
-			// Serial.println(photoValue);
-			unitsStatus[i] = photoValue > 600 ? true : false;
-		}
+	
+	int photo1Value = analogRead(photo1Pin);
+	Serial.println(photo1Value);
+	int photo2Value = analogRead(photo2Pin);
+	Serial.println(photo2Value);
+	unitsStatus[0] = digitalRead(unitsPin[0]);
+	unitsStatus[1] = digitalRead(unitsPin[1]);
+	unitsStatus[3] = photo1Value > 300 ? true : false;
+	unitsStatus[4] = photo2Value > 300 ? true : false;
+	unitsStatus[5] = int(distance / 20);
+}
 
+int detectChangedUnit()
+{
+	int unitIndex{}; // + for putting down and - for picking up
+	for (size_t i = 0; i < numberOfUnits; i++)
+	{
 		if (unitsStatus[i] < unitsLastStatus[i]) // picked up
 		{
 			unitIndex = -(i + 1);
@@ -271,12 +288,19 @@ int detectChangedUnit()
 			unitsLastStatus[i] = unitsStatus[i];
 			break;
 		}
+	}	
+	if (FirstTime)
+	{
+		FirstTime = false;
+		return 0;
 	}
-	return unitIndex;
+	else
+		return unitIndex;
 }
 
 void displayChangedUnit()
 {
+	updateUnitsStatus();
 	int unitIndex = detectChangedUnit();
 	if(unitIndex == 0) // Nothing was picked up or put down
 		return;
@@ -289,10 +313,26 @@ void displayChangedUnit()
 	Serial.print(unitsProductName[unitId - 1]);
 	Serial.print(F(" was "));
 	Serial.println(pickedUp ? " picked up" : " put down");
+	if (buzzerOn)
+	{
+		if (pickedUp)
+		{
+			tone(buzzerPin, 5000, 50);
+			delay(100);
+			tone(buzzerPin, 5000, 50);
+		}
+		else
+		{
+			tone(buzzerPin, 2000, 100);
+		}
+	}
+	
+	
+	
+	
 	if(pickedUp)
 	{
 		lcd.clear();
-		lcd.print(F("unit "));
 		lcd.print(unitId);
 		lcd.print(F(" -> "));
 		lcd.print(unitsProductName[unitId - 1]);
