@@ -6,7 +6,7 @@ window.onload = function() {
 window.setInterval(function() {
     load_ambient();
     load_shelf();
-}, 2000);
+}, 200);
 
 function load_ambient() {
     var url = "api/read_last_ambient.php"

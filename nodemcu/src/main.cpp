@@ -4,28 +4,33 @@
 #include <ArduinoJson.h>
 #include "DHT.h"
 
-#define SDA_PIN D1
-#define SCL_PIN D2
+
 const uint8_t I2C_MASTER = 0x42;
 const uint8_t I2C_SLAVE = 0x08;
 const uint8_t I2C_BUFFER_LENGHT = 60;
 
-const char *ssid = "Peppsi";
-const char *password = "figoliniho";
-const char *host = "192.168.1.106";
-// const char *ssid = "HONOR";
-// const char *password = "123454321";
-// const char *host = "192.168.43.97";
+// const char *ssid = "Peppsi";
+// const char *password = "figoliniho";
+// const char *host = "192.168.1.106";
+const char *ssid = "HONOR";
+const char *password = "123454321";
+const char *host = "192.168.43.97";
 const uint16_t port = 80;
 WiFiClient wifi;
 boolean wifiConnected = false;
 unsigned long lastConnectionTime = 0;			  // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 3000L; // delay between updates, in milliseconds
+const unsigned long postingInterval = 2000L; // delay between updates, in milliseconds
 
 DHT dht;
-const int dhtPin = D3;
-const int ledPin = D4;
 const int lightPin = A0;
+const int ledPin = D0;
+const int switch1Pin = D1;
+const int switch2Pin = D2;
+const int switch3Pin = D3;
+const int switch4Pin = D4;
+const int dhtPin = D5;
+#define SDA_PIN D8
+#define SCL_PIN D7
 bool ledStatus;
 
 const bool debug = true; 
@@ -40,6 +45,7 @@ String httpCommunication(const String &uri, const String &body = "");
 bool WireRequest(char buffer[], const char command);
 void readCommands();
 void readUnits();
+void readSwitches();
 void updateUnits();
 void updateAmbient();
 
@@ -49,6 +55,10 @@ void setup()
 	Serial.begin(115200);
 	Wire.begin(SDA_PIN, SCL_PIN, I2C_MASTER); // join i2c bus (address optional for master)
 	pinMode(ledPin, OUTPUT);
+	pinMode(switch1Pin, INPUT_PULLUP);
+	pinMode(switch2Pin, INPUT_PULLUP);
+	pinMode(switch3Pin, INPUT_PULLUP);
+	pinMode(switch4Pin, INPUT_PULLUP);
 	wifiConnected = connectWifi();
 }
 
@@ -70,6 +80,9 @@ void loop()
 		updateUnits();
 		delay(20);
 		updateAmbient();
+		delay(20);
+		readSwitches();
+
 		
 		delay(20);
 		Serial.println("--------- End of Loop ---------");
@@ -212,6 +225,29 @@ void readUnits()
 
 	if(debug)
 		Serial.println(" Read Units <<<<<<<<<");
+}
+
+void readSwitches()
+{
+	if(debug)
+		Serial.println(">>>>>>>>> Read Switches ");
+
+	const size_t capacity = JSON_OBJECT_SIZE(5) + 50;
+	DynamicJsonDocument doc(capacity);
+	char buffer[I2C_BUFFER_LENGHT];
+	doc["a"] = int(digitalRead(switch1Pin));
+	doc["b"] = int(digitalRead(switch2Pin));
+	doc["c"] = int(digitalRead(switch3Pin));
+	doc["d"] = int(digitalRead(switch4Pin));
+	serializeJson(doc, buffer, 100);
+
+	Wire.beginTransmission(I2C_SLAVE);
+	Wire.write('s');
+	serializeJson(doc, Wire);
+	Wire.endTransmission();
+
+	if(debug)
+		Serial.println(" Read Switches <<<<<<<<<");
 }
 
 void readCommands()
