@@ -9,26 +9,22 @@ $response = array();
 // Connect to database:
 require_once("db_connect.php");
 
-$sql = "SELECT units.id, units.status, products.name, products.price, products.image
-        FROM units
-        INNER JOIN products ON units.product_id=products.id";
+$sql = "SELECT id, status
+        FROM sensors";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 
 
 // Check for succesfull execution of query and no results found
 if (mysqli_num_rows($result) > 0) {
     
-    $response["units"] = array();
+    $response["sensors"] = array();
  
 	// While loop to store all the returned response in variable
     while ($row = mysqli_fetch_array($result)) {
-        $unit = array();
-        $unit["id"] = $row["id"];
-        $unit["status"] = $row["status"]; 
-        $unit["name"] = $row["name"];
-        $unit["price"] = intval($row["price"]);
-        $unit["image"] = $row["image"];
-        array_push($response["units"], $unit);
+        $sensor = array();
+        $sensor["id"] = $row["id"];
+        $sensor["status"] = $row["status"];
+        array_push($response["sensors"], $sensor);
     }
     $response["success"] = 1;
     echo json_encode($response);

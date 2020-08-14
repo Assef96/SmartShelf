@@ -7,19 +7,19 @@
 
 const uint8_t I2C_MASTER = 0x42;
 const uint8_t I2C_SLAVE = 0x08;
-const uint8_t I2C_BUFFER_LENGHT = 60;
+const uint8_t I2C_BUFFER_LENGHT = 80;
 
-// const char *ssid = "Peppsi";
-// const char *password = "figoliniho";
-// const char *host = "192.168.1.106";
-const char *ssid = "HONOR";
-const char *password = "123454321";
-const char *host = "192.168.43.97";
+const char *ssid = "Peppsi";
+const char *password = "figoliniho";
+const char *host = "192.168.1.104";
+// const char *ssid = "HONOR";
+// const char *password = "123454321";
+// const char *host = "192.168.43.97";
 const uint16_t port = 80;
 WiFiClient wifi;
 boolean wifiConnected = false;
 unsigned long lastConnectionTime = 0;			  // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 2000L; // delay between updates, in milliseconds
+const unsigned long postingInterval = 200L; // delay between updates, in milliseconds
 
 DHT dht;
 const int lightPin = A0;
@@ -29,24 +29,25 @@ const int switch2Pin = D2;
 const int switch3Pin = D3;
 const int switch4Pin = D4;
 const int dhtPin = D5;
-#define SDA_PIN D8
+#define SDA_PIN D6
 #define SCL_PIN D7
 bool ledStatus;
 
 const bool debug = true; 
 
-const size_t numberOfUnits{9};
-size_t unitsId[numberOfUnits];
-String unitsProductName[numberOfUnits];
-long unitsProductPrice[numberOfUnits];
+const size_t numberOfSensors{12};
+size_t sensorsId[numberOfSensors];
+String sensorsProductName[numberOfSensors];
+long sensorsProductPrice[numberOfSensors];
+int lightIntensity;
 
 boolean connectWifi(); // connect to wifi – returns true if successful or false if not
 String httpCommunication(const String &uri, const String &body = "");
 bool WireRequest(char buffer[], const char command);
 void readCommands();
-void readUnits();
+void readSensorsProducts();
 void readSwitches();
-void updateUnits();
+void updateSensors();
 void updateAmbient();
 
 void setup()
@@ -73,20 +74,22 @@ void loop()
     	ledStatus = !ledStatus;
 		digitalWrite(ledPin, ledStatus);
 
-		readUnits();
-		delay(20);
+		readSensorsProducts();
+		delay(100);
 		readCommands();
-		delay(20);
-		updateUnits();
-		delay(20);
+		delay(100);
+		updateSensors();
+		delay(100);
 		updateAmbient();
-		delay(20);
+		delay(100);
 		readSwitches();
+		delay(100);
 
-		
-		delay(20);
 		Serial.println("--------- End of Loop ---------");
 	}
+	readSwitches();
+	delay(100);
+	
 }
 
 boolean connectWifi()
@@ -105,7 +108,7 @@ boolean connectWifi()
 	{
 		delay(500);
 		Serial.print(".");
-		if (i > 100)
+		if (i > 30)
 		{
 			state = false;
 			break;
@@ -195,11 +198,11 @@ bool WireRequest(char buffer[], const char command)
 	return success;
 }
 
-void readUnits()
+void readSensorsProducts()
 {
 	if(debug)
-		Serial.println(">>>>>>>>> Read Units ");
-	const String uri{"/api/read_units1.php"};
+		Serial.println(">>>>>>>>> Read SensorsProducts ");
+	const String uri{"/api/read_sensors_products.php"};
 	String response = httpCommunication(uri);
 	if (response == "")
 		return;
@@ -215,16 +218,16 @@ void readUnits()
 		return;
 	}
 
-	for (size_t i = 0; i < numberOfUnits; i++)
+	for (size_t i = 0; i < numberOfSensors; i++)
 	{
 		Wire.beginTransmission(I2C_SLAVE);
 		Wire.write('p');
-		serializeJson(doc["units"][i], Wire);
+		serializeJson(doc["sensors"][i], Wire);
 		Wire.endTransmission();
 	}
 
 	if(debug)
-		Serial.println(" Read Units <<<<<<<<<");
+		Serial.println(" Read SensorsProducts <<<<<<<<<");
 }
 
 void readSwitches()
@@ -235,10 +238,12 @@ void readSwitches()
 	const size_t capacity = JSON_OBJECT_SIZE(5) + 50;
 	DynamicJsonDocument doc(capacity);
 	char buffer[I2C_BUFFER_LENGHT];
-	doc["a"] = int(digitalRead(switch1Pin));
-	doc["b"] = int(digitalRead(switch2Pin));
-	doc["c"] = int(digitalRead(switch3Pin));
-	doc["d"] = int(digitalRead(switch4Pin));
+	doc["a"] = int(!digitalRead(switch1Pin));
+	doc["b"] = int(!digitalRead(switch2Pin));
+	doc["c"] = int(!digitalRead(switch3Pin));
+	doc["d"] = int(!digitalRead(switch4Pin));
+	lightIntensity = analogRead(lightPin);
+	doc["p"] = lightIntensity;
 	serializeJson(doc, buffer, 100);
 
 	Wire.beginTransmission(I2C_SLAVE);
@@ -290,23 +295,23 @@ void readCommands()
 		Serial.println(" Read Commands <<<<<<<<<");
 }
 
-void updateUnits()
+void updateSensors()
 {
 	if(debug)
-		Serial.println(">>>>>>>>> Update Units ");
+		Serial.println(">>>>>>>>> Update Sensors ");
 	char buffer[I2C_BUFFER_LENGHT];
 	if(!WireRequest(buffer, 'u'))
 	{
 		Serial.println("Error getting information from Arduino");
 		return;
 	}
-	String uri{"/api/update_units.php"};
+	String uri{"/api/update_sensors.php"};
 	String response = httpCommunication(uri, buffer);
 
 	if (response == "")
 	return;
 	if(debug)
-		Serial.println(" Update Units <<<<<<<<<");
+		Serial.println(" Update Sensors <<<<<<<<<");
 }
 
 void updateAmbient()
@@ -335,6 +340,8 @@ void updateAmbient()
 	doc["humidity"] = humidity;
 	doc["light"] = light;
 	serializeJson(doc, buffer, 100);
+
+
 
 	String uri{"/api/update_ambient.php"};
 	String response = httpCommunication(uri, buffer);

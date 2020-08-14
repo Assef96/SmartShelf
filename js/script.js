@@ -1,14 +1,17 @@
 window.onload = function() {
-    load_ambient();
-    // load_shelf();
+    load_shelf_status();
+    load_shelf();
     load_commands();
+    load_products_list();
+    load_products();
 };
 window.setInterval(function() {
-    load_ambient();
-    load_shelf();
+    // load_ambient();
+    // load_shelf_status();
 }, 200);
 
-function load_ambient() {
+
+function load_shelf_status() {
     var url = "api/read_last_ambient.php"
     $.getJSON(url, function(response) {
         // var val = response;
@@ -20,12 +23,55 @@ function load_ambient() {
         $("#humidity").html(humidity);
         $("#light").html(light);
         var timeDifference = Date.now() - Date.parse(time);
-        if(timeDifference < 10000)
-            $("#connection_status").html("Connected");
+        if (timeDifference < 10000)
+            $("#connection-status").html("Connected");
         else
-            $("#connection_status").html("Not Connected");
+            $("#connection-status").html("Not Connected");
+    });
 
-
+    var url = "api/read_sensors.php"
+    $.getJSON(url, function(response) {
+        for (let index = 0; index < response["sensors"].length; index++) {
+            const sensor = response["sensors"][index];
+            const id = parseInt(sensor["id"]);
+            var status = parseInt(sensor["status"]);
+            if (id <= 4) {
+                if (status == 0)
+                    $("#pic".concat(id)).addClass("transparent");
+                else
+                    $("#pic".concat(id)).removeClass("transparent");
+            }
+            if (id == 5) {
+                if (status > 4)
+                    status = 4;
+                for (let i = 5; i < 5 + status; i++)
+                    $("#pic".concat(i)).removeClass("transparent");
+                for (let i = 5 + status; i <= 8; i++)
+                    $("#pic".concat(i)).addClass("transparent");
+            }
+            if (id >= 6 && id <= 10) {
+                if (status == 0)
+                    $("#pic".concat(id + 3)).addClass("transparent");
+                else
+                    $("#pic".concat(id + 3)).removeClass("transparent");
+            }
+            if (id == 11) {
+                if (status > 3)
+                    status = 3;
+                for (let i = 14; i < 14 + status; i++)
+                    $("#pic".concat(i)).removeClass("transparent");
+                for (let i = 14 + status; i <= 16; i++)
+                    $("#pic".concat(i)).addClass("transparent");
+            }
+            if (id == 12) {
+                if (status > 3)
+                    status = 3;
+                for (let i = 17; i < 17 + status; i++)
+                    $("#pic".concat(i)).removeClass("transparent");
+                for (let i = 17 + status; i <= 19; i++)
+                    $("#pic".concat(i)).addClass("transparent");
+            }
+        }
     });
 }
 
@@ -33,35 +79,71 @@ function load_commands() {
     var url = "api/read_commands.php"
     $.getJSON(url, function(response) {
         var lamp1 = (response['commands']['lamp1']);
-        if (lamp1 == '1'){
+        if (lamp1 == '1') {
             $("#lamp1").prop("checked", true);
         }
         var lamp2 = (response['commands']['lamp2']);
-        if (lamp2 == '1'){
+        if (lamp2 == '1') {
             $("#lamp2").prop("checked", true);
         }
         var buzzer = (response['commands']['buzzer']);
-        if (buzzer == '1'){
+        if (buzzer == '1') {
             $("#buzzer").prop("checked", true);
         }
     });
 }
 
 function load_shelf() {
-    var url = "api/read_units.php"
+    var url = "api/read_units_products.php"
     $.getJSON(url, function(response) {
         for (let index = 0; index < response["units"].length; index++) {
-            const product = response["units"][index];
-            $("#product_name".concat(product["id"])).html(product["name"].concat(product["status"]));
-            $("#product_image".concat(product["id"])).attr("src", "img/".concat(product["image"]));
-            $("#product_image".concat(product["id"])).attr("alt", product["name"]);
-            if (product["status"] == 0) {
-                $("#product_image".concat(product["id"])).addClass("transparent");
-                // $("#product_image".concat(product["id"])).addClass("visible");
-            } else {
-                $("#product_image".concat(product["id"])).removeClass("transparent");
-                // $("#product_image".concat(product["id"])).removeClass("visible");
-            }
+            const unit = response["units"][index];
+            // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
+            $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
+            $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
+            $("#unit-info".concat(unit["id"])).html(unit["name"]);
+        }
+    });
+}
+
+function load_products_list() {
+    var url = "api/read_products.php"
+    $.getJSON(url, function(response) {
+        var str = '';
+        for (let index = 0; index < response["products"].length; index++) {
+            const product = response["products"][index];
+            const id = product["id"];
+            const name = product["name"];
+            const price = product["price"];
+            const image = product["image"];
+
+            // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
+            // $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
+            // $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
+            // $("#unit-info".concat(unit["id"])).html(unit["name"]);
+            str += `<div class="card" style="width: 15rem;">
+            <img src="img/${image}" class="card-img-top" alt="${image}">
+            <div class="card-body">
+            <h5 class="card-title">${name}</h5>
+            <p class="card-text">id: ${id}</p>
+            <p class="card-text">Price: ${price}</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+            </div>`;
+            $("#products-list").html(str);
+        }
+    });
+}
+
+function load_shelf() {
+    var url = "api/read_units_products.php"
+    $.getJSON(url, function(response) {
+        for (let index = 0; index < response["units"].length; index++) {
+            const unit = response["units"][index];
+            // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
+            $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
+            $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
+            $("#unit-info".concat(unit["id"])).html(unit["name"]);
         }
     });
 }
@@ -73,8 +155,8 @@ $('#lamp1').on('click', function() {
     var status = 0;
     if (checkBox.checked == true)
         status = 1;
-    $.post(url, {"lamp1": status}, function(result){
-      console.log(result);
+    $.post(url, { "lamp1": status }, function(result) {
+        console.log(result);
     });
 });
 
@@ -84,8 +166,8 @@ $('#lamp2').on('click', function() {
     var status = 0;
     if (checkBox.checked == true)
         status = 1;
-    $.post(url, {"lamp2": status}, function(result){
-      console.log(result);
+    $.post(url, { "lamp2": status }, function(result) {
+        console.log(result);
     });
 });
 
@@ -95,11 +177,11 @@ $('#buzzer').on('click', function() {
     var status = 0;
     if (checkBox.checked == true)
         status = 1;
-    $.post(url, {"buzzer": status}, function(result){
-      console.log(result);
+    $.post(url, { "buzzer": status }, function(result) {
+        console.log(result);
     });
 });
-  
+
 
 $('#led-on').on('click', function() {
     var url = "api/update_actuators.php?status=on";
@@ -129,27 +211,40 @@ $('#alarm-off').on('click', function() {
     });
 });
 
-// $("#insert_product_form").submit(function(event) {
-//     event.preventDefault(); //prevent default action 
-//     var url = $(this).attr("action"); //get form action url
-//     var form_data = $(this).serialize(); //Encode form elements for submission
-//     var enctype = $(this).attr("enctype"); //get form action url
+$('#alarm-off').on('click', function() {
+    var url = "api/update_actuators.php?alarm=off";
+    $.getJSON(url, function(response) {
+        console.log(response);
+    });
+});
 
-//     // $.post(url, form_data, function(response) {
-//     //     console.log(response);
-//     // });
+$("#insert-product-form").submit(function(event) {
+    event.preventDefault();
+    var enctype = $(this).attr("enctype");
+    var url = $(this).attr("action");
+    var form_data = new FormData(this);
 
-//     $.ajax({
-//         method: 'POST',
-//         enctype: enctype,
-//         url: url,
-//         data: form_data,
-//         cache: false,
-//         contentType: false,
-//         processData: false,
-//         timeout: 600000,
-//         success: function(response) {
-//             console.log(response);
-//         }
-//     });
-// });
+    // $.post("api/insert_product.php", form_data,
+    //     function(data, status) {
+    //         alert("Data: " + data + "\nStatus: " + status);
+    //     });
+
+    $.ajax({
+        method: 'POST',
+        enctype: enctype,
+        url: url,
+        data: form_data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        timeout: 600000,
+        success: function(response) {
+            console.log(response);
+            $("#img").attr("src", response);
+            $(".preview img").show(); // Display image element
+        },
+        error: function(response) {
+            console.log(response);
+        }
+    });
+});

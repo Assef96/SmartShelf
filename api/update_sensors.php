@@ -13,7 +13,7 @@ require_once("db_connect.php");
 for ($i=1; $i <= count($data); $i++) {
     $id = strval($i);
     $status = $data[$id];
-    $sql = "UPDATE units SET status= '$status' WHERE id = '$id'";
+    $sql = "UPDATE sensors SET status= '$status' WHERE id = '$id'";
     $result = mysqli_query($conn, $sql);
     if (!$result) {
         $response["success"] = 0;

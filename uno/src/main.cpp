@@ -16,12 +16,12 @@ HX711 scale;
 //  SDA_PIN A4 and SCL_PIN A5
 const int8_t I2C_MASTER = 0x42;
 const int8_t I2C_SLAVE = 0x08;
-const uint8_t I2C_BUFFER_LENGHT = 60;
+const uint8_t I2C_BUFFER_LENGHT = 80;
 char command;
 
-unsigned long wakeUpTime = 5000L; 
+unsigned long wakeUpTime = 3000L; 
 unsigned long lastConnectionTime = 0;			  // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 1000L; // delay between updates, in milliseconds
+const unsigned long postingInterval = 3000L; // delay between updates, in milliseconds
 
 bool ledStatus;
 
@@ -40,24 +40,24 @@ const int photoModulePin = 11;
 const int irModulePin = 12;
 const int ledPin = 13;
 
-const int photo1Pin = A0;
-const int photo2Pin = A1;
+const int photo1Pin = A1;
+const int photo2Pin = A0;
 const int irPin = A2;
 const int irDistancePin = A3;
 // const int sdaPin = A4;
 // const int sckPin = A5;
 
 bool photoPinLastStatus;
-const size_t numberOfUnits{9};
-int unitsStatus[numberOfUnits];
-int unitsLastStatus[numberOfUnits];
-size_t unitsId[numberOfUnits];
-String unitsProductName[numberOfUnits];
-long unitsProductPrice[numberOfUnits];
+const size_t numberOfSensors{12};
+int sensorsStatus[numberOfSensors];
+int sensorsLastStatus[numberOfSensors];
+size_t sensorsId[numberOfSensors];
+String sensorsProductName[numberOfSensors];
+long sensorsProductPrice[numberOfSensors];
+int lightIntensity;
 
-const bool debug = true;
-const bool debugSensors = false;
-// bool FirstTime = true;
+const bool debug = false;
+const bool debugSensors = true;
 bool isReady = false;
 bool buzzerOn = true;
 
@@ -67,9 +67,9 @@ void sendResponse(char buffer[]);
 void handleRequests();
 void readCommands(DynamicJsonDocument& doc);
 void readSwitches(DynamicJsonDocument& doc);
-void updateUnits();
-void readUnits(DynamicJsonDocument& doc);
-void updateUnitsStatus();
+void updateSensors();
+void readSensorsProducts(DynamicJsonDocument& doc);
+void updateSensorsStatus();
 int detectChangedUnit();
 void displayChangedUnit();
 float oldDistance = 0;
@@ -100,6 +100,30 @@ void setup()
 	digitalWrite(lamp2Pin, HIGH);
 	pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
 	pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+
+
+	scale.set_offset(89831);
+	scale.set_scale(72673);
+
+	// Serial.print("Offset: \t\t");
+	// long offset = scale.read_average(20);
+	// Serial.println(offset);
+	// scale.set_offset(offset);
+	// Serial.println("Set one unit");
+	// for (size_t i = 0; i < 10; i++)
+	// {
+	// 	delay(400);
+	// 	Serial.print('.');
+	// }
+	// Serial.println();
+	// Serial.print("One unit: \t\t");
+	// double scaleUnit = scale.get_value(20);
+	// Serial.println(scaleUnit);  	// print the average of 20 readings from the ADC
+	// scale.set_scale(scaleUnit);
+	// Serial.print("Sensors: \t\t");
+	// Serial.println(scale.get_units(20));			// print a raw reading from the ADC
+	// Serial.println("Calibration done.");
+
 }
 
 void loop()
@@ -111,41 +135,11 @@ void loop()
 		
 		lastConnectionTime = millis();
 		ledStatus = !ledStatus;
-		// digitalWrite(ledPin, ledStatus);
-		// displayChangedUnit();
-
+		digitalWrite(ledPin, ledStatus);
+		displayChangedUnit();
 
 		Serial.println(F("--------- End of Loop ---------"));
 	}
-		// Serial.print("Val: ");
-		// Serial.println(analogRead(irPin));
-		// delay(1000);
-
-		// long duration;
-		// float distance;
-		// digitalWrite(trigPin, LOW);
-		// delayMicroseconds(2);
-		// digitalWrite(trigPin, HIGH);
-		// delayMicroseconds(10);
-		// digitalWrite(trigPin, LOW);
-		// duration = pulseIn(echoPin, HIGH);
-		// distance= duration*0.034/2;
-		// if(distance != oldDistance)
-		// {
-		// 	lcd.clear();
-		// 	lcd.print("distance: ");
-		// 	lcd.setCursor(0, 1);
-		// 	lcd.print(distance);
-		// 	oldDistance = distance;
-		// }
-		// delay(500);
-		// int value = analogRead(A0);
-		// lcd.clear();
-		// lcd.print("value: ");
-		// lcd.setCursor(0, 1);
-		// lcd.print(value);
-		// delay(200);
-
 }
 
 void receiveEvent(int numBytes)
@@ -193,7 +187,7 @@ void receiveEvent(int numBytes)
 			readCommands(doc);
 			break;
 		case 'p':
-			readUnits(doc);
+			readSensorsProducts(doc);
 			break;
 		case 's':
 			readSwitches(doc);
@@ -212,7 +206,7 @@ void requestEvent()
 	{
 
 	case 'u':
-		updateUnits();
+		updateSensors();
 	default:
 		break;
 	}
@@ -248,108 +242,124 @@ void readCommands(DynamicJsonDocument& doc)
 	digitalWrite(lamp2Pin, !lamp2Status);
 }
 
-void readUnits(DynamicJsonDocument& doc)
+void readSensorsProducts(DynamicJsonDocument& doc)
 {
 	int index{doc["id"].as<int>() - 1};
 	String name{doc["name"].as<char *>()};
 	long price{doc["price"].as<long>()};
-	unitsProductName[index] = name;
-	unitsProductPrice[index] = price;
+	sensorsProductName[index] = name;
+	sensorsProductPrice[index] = price;
 }
 
 void readSwitches(DynamicJsonDocument& doc)
 {
-	// unitsStatus[0] = doc["a"].as<int>();
-	// unitsStatus[1] = doc["b"].as<int>();
-	// unitsStatus[0] = doc["c"].as<int>();
-	// unitsStatus[1] = doc["d"].as<int>();
+	sensorsStatus[0] = doc["a"].as<int>();
+	sensorsStatus[1] = doc["b"].as<int>();
+	sensorsStatus[2] = doc["c"].as<int>();
+	sensorsStatus[3] = doc["d"].as<int>();
+	lightIntensity = doc["p"].as<int>();
 }
 
-void updateUnits()
+void updateSensors()
 {
 	char buffer[I2C_BUFFER_LENGHT];
-	const size_t capacity = JSON_OBJECT_SIZE(9) + 50;
+	const size_t capacity = JSON_OBJECT_SIZE(12) + 50;
 	DynamicJsonDocument doc(capacity);
-	for (size_t i = 0; i < numberOfUnits; i++)
-		doc[String(i + 1)] = unitsLastStatus[i];
+
+	for (size_t i = 0; i < numberOfSensors; i++)
+		doc[String(i + 1)] = sensorsStatus[i];
 	serializeJson(doc, buffer, I2C_BUFFER_LENGHT);
 	sendResponse(buffer);
 }
 
-void updateUnitsStatus()
+void updateSensorsStatus()
 {
-	// 	float h = 35;
-	// 	float t = 22;
-	// 	float b = analogRead(A0);
 	// 	if (isnan(h) || isnan(t) || isnan(b))
 	// 	{
 	// 		Serial.println(F("Failed to read from DHT sensor!"));
 	// 		return;
 	// 	}
 
-	bool irModuleStatus = !digitalRead(irModulePin);
-	unitsStatus[2] = irModuleStatus;
+	double scaleUnits = 0;
+	if (scale.is_ready())
+		scaleUnits = scale.get_units(5);
+	else
+		Serial.println("HX711 not found.");
+	sensorsStatus[4] = round(scaleUnits);
 
 	int photo1Value = analogRead(photo1Pin);
 	int photo2Value = analogRead(photo2Pin);
-	unitsStatus[3] = photo1Value > 500 ? true : false;
-	unitsStatus[4] = photo2Value > 500 ? true : false;
+	sensorsStatus[5] = photo1Value > 300 + 0.5 * lightIntensity ? true : false;
+	sensorsStatus[9] = photo2Value > 250 + 0.4 * lightIntensity ? true : false;
 
-	long duration;
-	int distance;
-	digitalWrite(trigPin, LOW);
-	delayMicroseconds(2);
-	digitalWrite(trigPin, HIGH);
-	delayMicroseconds(10);
-	digitalWrite(trigPin, LOW);
-	duration = pulseIn(echoPin, HIGH);
-	distance= duration*0.034/2;
-	if (distance > 45)
+	bool photoModuleStatus = digitalRead(photoModulePin);
+	sensorsStatus[6] = photoModuleStatus;
+
+	bool irModuleStatus = !digitalRead(irModulePin);
+	sensorsStatus[8] = irModuleStatus;
+
+	int irValue = analogRead(irPin);
+	sensorsStatus[7] = irValue < 600 ? true : false;
+
+	long duration{};
+	float distance{};
+	float totalDistance{};
+	for (size_t i = 0; i < 10; i++)
 	{
-		unitsStatus[5] = 0;
+		noInterrupts();
+		digitalWrite(trigPin, LOW);
+		delayMicroseconds(2);
+		digitalWrite(trigPin, HIGH);
+		delayMicroseconds(10);
+		digitalWrite(trigPin, LOW);
+		duration = pulseIn(echoPin, HIGH);
+		interrupts();
+		distance = duration * 0.0343 / 2;
+		totalDistance += distance;
+		delay(1);
+		// Serial.print(distance);
+		// Serial.print("  ");
+	}
+	// Serial.println();
+	distance = totalDistance / 10;
+	// Serial.print(distance);
+	if (distance > 19)
+	{
+		sensorsStatus[10] = 0;
 	}
 	else
 	{
-		unitsStatus[5] = int((45 - distance) / 5);
+		sensorsStatus[10] = int((19 - distance) / 5);
 	}
 	
-
-	int irValue1 = analogRead(irPin);
-	unitsStatus[6] = irValue1 < 700 ? true : false;
-
-	int irValue2 = analogRead(irDistancePin);
-	unitsStatus[7] = irValue2 < 700 ? true : false;
-
-	if (scale.is_ready())
-	{
-		long reading = scale.read();
-		Serial.print("HX711 reading: ");
-		Serial.println(reading);
-	}
-	else
-	{
-		Serial.println("HX711 not found.");
-	}
-	unitsStatus[8] = 0;
-
+	int irDistanceValue = analogRead(irDistancePin);
+	sensorsStatus[11] = irDistanceValue < 400 ? true : false;
 
 	if (debugSensors)
 	{
 		Serial.print(F("Switches status: "));
-		Serial.print(unitsStatus[0]);
-		Serial.println(unitsStatus[1]);
-		Serial.print(F("Distance: "));
+		Serial.print(sensorsStatus[0]);
+		Serial.print(sensorsStatus[1]);
+		Serial.print(sensorsStatus[2]);
+		Serial.println(sensorsStatus[3]);
+		Serial.print("Scale Units: ");
+		Serial.println(scaleUnits);
+		Serial.print(F("Ultrasonic Distance: "));
 		Serial.println(distance);
-		Serial.print(F("IR Value 1 : "));
-		Serial.println(irValue1);
-		Serial.print(F("IR Value 2 : "));
-		Serial.println(irValue2);
+		Serial.print(F("IR Value : "));
+		Serial.println(irValue);
+		Serial.print(F("IR Distance Value: "));
+		Serial.println(irDistanceValue);
+		Serial.print(F("Light Intensity: "));
+		Serial.println(lightIntensity);
 		Serial.print(F("Photo 1 Value: "));
 		Serial.println(photo1Value);
 		Serial.print(F("Photo 2 Value: "));
 		Serial.println(photo2Value);
 		Serial.print(F("IR Module Value: "));
 		Serial.println(irModuleStatus);
+		Serial.print(F("Photo Module Value: "));
+		Serial.println(photoModuleStatus);
 	}
 	
 }
@@ -357,20 +367,20 @@ void updateUnitsStatus()
 int detectChangedUnit()
 {
 	int unitIndex{}; // + for putting down and - for picking up
-	for (size_t i = 0; i < numberOfUnits; i++)
+	for (size_t i = 0; i < numberOfSensors; i++)
 	{
-		if (unitsStatus[i] < unitsLastStatus[i]) // picked up
+		if (sensorsStatus[i] < sensorsLastStatus[i]) // picked up
 			unitIndex = -(i + 1);
-		else if (unitsStatus[i] > unitsLastStatus[i]) // put down
+		else if (sensorsStatus[i] > sensorsLastStatus[i]) // put down
 			unitIndex = +(i + 1);
-		unitsLastStatus[i] = unitsStatus[i];
+		sensorsLastStatus[i] = sensorsStatus[i];
 	}	
 	return unitIndex;
 }
 
 void displayChangedUnit()
 {
-	updateUnitsStatus();
+	updateSensorsStatus();
 	int unitIndex = detectChangedUnit();
 	if(unitIndex == 0) // Nothing was picked up or put down
 		return;
@@ -382,7 +392,7 @@ void displayChangedUnit()
 	Serial.print(F("unit "));
 	Serial.print(unitId);
 	Serial.print(F(" -> "));
-	Serial.print(unitsProductName[unitId - 1]);
+	Serial.print(sensorsProductName[unitId - 1]);
 	Serial.print(F(" was "));
 	Serial.println(pickedUp ? " picked up" : " put down");
 	if (buzzerOn)
@@ -398,16 +408,16 @@ void displayChangedUnit()
 	}
 	
 	
-	
-	
 	if(pickedUp)
 	{
-		lcd.clear();
-		lcd.print(unitId);
-		lcd.print(F(" -> "));
-		lcd.print(unitsProductName[unitId - 1]);
-		lcd.setCursor(0, 1);
-		lcd.print(F("Price: "));
-		lcd.print(unitsProductPrice[unitId - 1]);
 	}
+	lcd.clear();
+	lcd.print(unitId);
+	lcd.print(F(" -> "));
+	lcd.print(sensorsProductName[unitId - 1]);
+	lcd.setCursor(0, 1);
+	lcd.print(F("Price: "));
+	lcd.print(sensorsProductPrice[unitId - 1]);
+	lcd.setCursor(15, 1);
+	lcd.print(sensorsStatus[unitId - 1]);
 }

@@ -18,7 +18,7 @@
     <script src="js/bootstrap4-toggle.min.js"></script> -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
     <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
-    
+
 </head>
 
 <body>
@@ -26,10 +26,11 @@
         <div class="row border1">
             <div class="col">
                 <h3 class="title">Smart Shelf Dashboard</h3>
-                <h6 id="connection_status" class="title">Connection Status</h6>
+                <h6 id="connection-status" class="title">Connection Status</h6>
             </div>
         </div>
         <div class="row">
+
             <div class="col-md">
                 <div class="row border1">
                     <div class="col">
@@ -49,119 +50,155 @@
                     <div class="col">
                         <p>Lamp 1</p>
                         <label class="switch">
-                            <input id="lamp1" type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+                                <input id="lamp1" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
                     </div>
                     <div class="col">
                         <p>Lamp 2</p>
                         <label class="switch">
-                            <input id="lamp2" type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+                                <input id="lamp2" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
                     </div>
                     <div class="col">
                         <p>Buzzer</p>
                         <label class="switch">
-                            <input id="buzzer" type="checkbox">
-                            <span class="slider round"></span>
-                        </label>
+                                <input id="buzzer" type="checkbox">
+                                <span class="slider round"></span>
+                            </label>
                     </div>
                 </div>
-                <div class="row border1">
-                    <table class="table table-bordered">
-                        <tr>
-                            <td>
-                                <img id="product_image1" src="img/placeholder.png" alt="image" class="img-thumbnail" width="80px"
-                                    height="80px">
-                                <p id="product_name1">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image2" src="img/placeholder.png" alt="image" class="img-thumbnail" width="80px"
-                                    height="80px">
-                                <p id="product_name2">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image3" src="img/placeholder.png" alt="image" class="img-thumbnail" width="80px"
-                                    height="80px">
-                                <p id="product_name3">Name</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img id="product_image4" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name4">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image5" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name5">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image6" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name6">Name</p>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <img id="product_image7" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name7">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image8" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name8">Name</p>
-                            </td>
-                            <td>
-                                <img id="product_image9" src="img/placeholder.png" src="" alt="image" class="img-thumbnail" width="80px" height="80px">
-                                <p id="product_name9">Name</p>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="col-md border1 text-left">
-                <form action="api/insert_product.php" method="post" id="insert_product_form"
-                    enctype="multipart/form-data">
-                    <div class="form-group row">
-                        <label class="col-3" for="price">Name</label>
-                        <div class="col-9">
-                            <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                                placeholder="Enter the name of the product">
-                        </div>
-                        <!-- <small id="nameHelp" class="form-text text-muted">We'll never share the name with anyone else.</small> -->
-                    </div>
-                    <div class="form-group row">
-                        <label class="col-3" for="price">Price</label>
-                        <div class="col-9">
-                            <input type="text" class="form-control" id="price" name="price" aria-describedby="priceHelp"
-                                placeholder="Enter the price of the product">
-                        </div>
-                    </div>
-                    <div class="form-check row">
-                        <div class="col">
-                            <input type="checkbox" class="form-check-input" id="check" name="sold" value="checked">
-                            <label class="form-check-label" for="check">Sold</label>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col">
-                            <label for="product_image">Image</label>
-                            <input type="file" class="form-control-file" id="product_image" name="image">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <button type="submit" name="submit" value="Submit Form" class="btn btn-primary row">Add
-                                product</button>
-                        </div>
-                    </div>
-                </form>
 
+
+                <!-- <div class="col-md border1 text-left">
+                    <form action="api/insert-product.php" method="post" id="insert-product-form"
+                        enctype="multipart/form-data">
+                        <div class="form-group row">
+                            <label class="col-3" for="price">Name</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
+                                    placeholder="Enter the name of the product">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-3" for="price">Price</label>
+                            <div class="col-9">
+                                <input type="text" class="form-control" id="price" name="price" aria-describedby="priceHelp"
+                                    placeholder="Enter the price of the product">
+                            </div>
+                        </div>
+                        <div class="form-check row">
+                            <div class="col">
+                                <input type="checkbox" class="form-check-input" id="check" name="sold" value="checked">
+                                <label class="form-check-label" for="check">Sold</label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col">
+                                <label for="product-image">Image</label>
+                                <input type="file" class="form-control-file" id="product-image" name="image">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <button type="submit" name="submit" value="Submit Form" class="btn btn-primary row">Add
+                                    product</button>
+                            </div>
+                        </div>
+                    </form>
+    
+                </div> -->
+
+            </div>
+
+            <div class="col-md">
+                <div class="absolute">
+                    <div class="floor top-floor">
+                        <div class="wood switches">
+                            <div class="sw sw1">
+                                <img class="pic unit1" id="pic1">
+                            </div>
+                            <div class="sw sw2">
+                                <img class="pic unit1" id="pic2">
+                            </div>
+                            <div class="sw sw3">
+                                <img class="pic unit1" id="pic3">
+                            </div>
+                            <div class="sw sw4">
+                                <img class="pic unit1" id="pic4">
+                            </div>
+                            <div class="unit-info" id="unit-info1">U1</div>
+                        </div>
+                        <div class="wood scale">
+                            <div class="sw sw1">
+                                <img class="pic unit2" id="pic5">
+                            </div>
+                            <div class="sw sw2">
+                                <img class="pic unit2" id="pic6">
+                            </div>
+                            <div class="sw sw3">
+                                <img class="pic unit2" id="pic7">
+                            </div>
+                            <div class="sw sw4">
+                                <img class="pic unit2" id="pic8">
+                            </div>
+                            <div class="unit-info" id="unit-info2">U2</div>
+                        </div>
+                    </div>
+                    <div class="floor middle-floor">
+                        <div class="light">
+                            <div class="mid mid1">
+                                <img class="pic unit3" id="pic9">
+                            </div>
+                            <div class="mid mid2">
+                                <img class="pic unit3" id="pic10">
+                            </div>
+                            <div class="mid mid3">
+                                <img class="pic unit3" id="pic11">
+                            </div>
+                            <div class="mid mid4">
+                                <img class="pic unit3" id="pic12">
+                            </div>
+                            <div class="mid mid5">
+                                <img class="pic unit3" id="pic13">
+                            </div>
+                            <div class="unit-info" id="unit-info3">U3</div>
+                        </div>
+                    </div>
+                    <div class="floor bottom-floor">
+                        <div class="dis dis1 unit4">
+                            <div class="ultra ultra1">
+                                <img class="pic unit4" id="pic14">
+                            </div>
+                            <div class="ultra ultra2">
+                                <img class="pic unit4" id="pic15">
+                            </div>
+                            <div class="ultra ultra3">
+                                <img class="pic unit4" id="pic16">
+                            </div>
+                            <div class="unit-info" id="unit-info4">U4</div>
+                        </div>
+                        <div class="dis dis2 unit4">
+                            <div class="ir ir1">
+                                <img class="pic unit5" id="pic17">
+                            </div>
+                            <div class="ir ir2">
+                                <img class="pic unit5" id="pic18">
+                            </div>
+                            <div class="ir ir3">
+                                <img class="pic unit5" id="pic19">
+                            </div>
+                            <div class="unit-info" id="unit-info5">U5</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
-    <script src="js/script.js"></script>
 
+    <script src="js/script.js"></script>
 </body>
 
 

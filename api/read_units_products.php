@@ -9,7 +9,7 @@ $response = array();
 // Connect to database:
 require_once("db_connect.php");
 
-$sql = "SELECT units.id, products.name, products.price
+$sql = "SELECT units.id, products.name, products.price, products.image
         FROM units
         INNER JOIN products ON units.product_id=products.id";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
@@ -26,6 +26,7 @@ if (mysqli_num_rows($result) > 0) {
         $unit["id"] = $row["id"];
         $unit["name"] = $row["name"];
         $unit["price"] = intval($row["price"]);
+        $unit["image"] = $row["image"];
         array_push($response["units"], $unit);
     }
     $response["success"] = 1;

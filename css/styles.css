@@ -11,6 +11,10 @@ body {
     opacity: 0.5;
 }
 
+.product-pic {
+    width: 50px;
+}
+
 .my-container {
     justify-content: center;
     /* border: 1px solid green; */
@@ -49,7 +53,7 @@ i.sensor {
     /* fill: green; */
 }
 
-.sensor_value {
+.sensor-value {
     line-height: 60px;
     font-family: Helvetica;
     color: #fff;
@@ -57,7 +61,7 @@ i.sensor {
     display: inline;
 }
 
-.sensor_icon {
+.sensor-icon {
     height: 40px;
     width: 40px;
     vertical-align: middle;
@@ -92,21 +96,20 @@ i.sensor {
     cursor: pointer;
 }
 
-
 .switch {
     position: relative;
     display: inline-block;
     width: 60px;
     height: 34px;
-  }
-  
-  .switch input { 
+}
+
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
-  }
-  
-  .slider {
+}
+
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -116,9 +119,9 @@ i.sensor {
     background-color: #ccc;
     -webkit-transition: .4s;
     transition: .4s;
-  }
-  
-  .slider:before {
+}
+
+.slider:before {
     position: absolute;
     content: "";
     height: 26px;
@@ -128,27 +131,242 @@ i.sensor {
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
-  }
-  
-  input:checked + .slider {
+}
+
+input:checked+.slider {
     background-color: #2196F3;
-  }
-  
-  input:focus + .slider {
+}
+
+input:focus+.slider {
     box-shadow: 0 0 1px #2196F3;
-  }
-  
-  input:checked + .slider:before {
+}
+
+input:checked+.slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
+}
+
+
+/* Rounded sliders */
+
+.slider.round {
     border-radius: 34px;
-  }
-  
-  .slider.round:before {
+}
+
+.slider.round:before {
     border-radius: 50%;
-  }
+}
+
+div.absolute {
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    /* height: 40%; */
+    border: 1px solid black;
+    padding-top: 100%;
+    /* 4:3 Aspect Ratio */
+    background-color: white;
+}
+
+div.floor {
+    position: absolute;
+    right: 7%;
+    width: 86%;
+    height: 30%;
+    /* border: 3px solid #2a21ad; */
+    background-color: khaki;
+}
+
+div.top-floor {
+    top: 2%;
+}
+
+div.middle-floor {
+    top: 34%;
+}
+
+div.bottom-floor {
+    top: 67%;
+}
+
+div.wood {
+    position: absolute;
+    top: 4%;
+    width: 35%;
+    height: 76%;
+    /* border: 3px solid #73AD21; */
+    background-color: burlywood
+}
+
+div.switches {
+    left: 10%;
+}
+
+div.scale {
+    right: 10%;
+}
+
+div.sw {
+    position: absolute;
+    width: 32%;
+    height: 42%;
+    /* border: 2px solid #ad2121; */
+}
+
+div.sw1 {
+    top: 4%;
+    left: 7%;
+}
+
+div.sw2 {
+    top: 4%;
+    right: 7%;
+}
+
+div.sw3 {
+    bottom: 4%;
+    left: 7%;
+}
+
+div.sw4 {
+    bottom: 4%;
+    right: 7%;
+}
+
+div.light {
+    position: absolute;
+    width: 94%;
+    height: 38%;
+    left: 3%;
+    top: 28%;
+    /* border: 1px solid #2136ad; */
+}
+
+div.mid {
+    position: absolute;
+    width: 13%;
+    height: 90%;
+    top: 5%;
+    /* border: 2px solid #000000; */
+}
+
+div.mid1 {
+    left: 6%;
+}
+
+div.mid2 {
+    left: 25%;
+}
+
+div.mid3 {
+    left: 44%;
+}
+
+div.mid4 {
+    left: 63%;
+}
+
+div.mid5 {
+    left: 82%;
+}
+
+div.dis {
+    position: absolute;
+    width: 14%;
+    height: 94%;
+    top: 3%;
+    /* border: 1px solid #4621ad; */
+}
+
+div.dis1 {
+    left: 26%;
+}
+
+div.dis2 {
+    right: 26%;
+}
+
+div.ultra {
+    position: absolute;
+    width: 74%;
+    height: 30%;
+    right: 13%;
+    /* border: 1px solid #ad2121; */
+}
+
+div.ultra1 {
+    bottom: 3%;
+}
+
+div.ultra2 {
+    bottom: 35%;
+}
+
+div.ultra3 {
+    bottom: 67%;
+}
+
+div.ir {
+    position: absolute;
+    width: 74%;
+    height: 30%;
+    left: 13%;
+    /* border: 2px solid #ad2121; */
+}
+
+div.ir1 {
+    bottom: 3%;
+}
+
+div.ir2 {
+    bottom: 35%;
+}
+
+div.ir3 {
+    bottom: 67%;
+}
+
+div.unit-info {
+    position: absolute;
+    color: black;
+    /* border: 1px solid black; */
+    font-size: 3vmin;
+}
+
+div#unit-info1 {
+    bottom: -25%;
+    width: 100%;
+    text-align: center;
+}
+
+div#unit-info2 {
+    bottom: -25%;
+    width: 100%;
+    text-align: center;
+}
+
+div#unit-info3 {
+    bottom: -50%;
+    width: 100%;
+    text-align: center;
+}
+
+div#unit-info4 {
+    top: 45%;
+    left: -175%;
+    width: 165%;
+    text-align: right;
+}
+
+div#unit-info5 {
+    top: 45%;
+    right: -175%;
+    width: 165%;
+    text-align: left;
+}
+
+img.pic {
+    width: 90%;
+    border: 0.5px solid brown;
+}

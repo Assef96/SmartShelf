@@ -11,7 +11,7 @@ SoftwareI2C WireS1;
 LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F, 16, 2); // Change to (0x27,16,2) for 16x2 LCD.
 void setup() {
   // Initiate the LCD:
-  lcd.init(&WireS1, 3, 2);
+  lcd.init(&WireS1, 7, 6);
   lcd.backlight();
 }
 void loop() {
