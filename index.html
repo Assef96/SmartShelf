@@ -48,68 +48,27 @@
                 </div>
                 <div class="row border1">
                     <div class="col">
-                        <p>Lamp 1</p>
+                        <span class="icon"><i class="far fa-lightbulb command-icon"></i></span>
                         <label class="switch">
                                 <input id="lamp1" type="checkbox">
                                 <span class="slider round"></span>
                             </label>
                     </div>
                     <div class="col">
-                        <p>Lamp 2</p>
+                        <span class="icon"><i class="fas fa-lightbulb command-icon"></i></span>
                         <label class="switch">
                                 <input id="lamp2" type="checkbox">
                                 <span class="slider round"></span>
                             </label>
                     </div>
                     <div class="col">
-                        <p>Buzzer</p>
+                        <span class="icon"><i class="fas fa-volume-up command-icon"></i></span>
                         <label class="switch">
                                 <input id="buzzer" type="checkbox">
                                 <span class="slider round"></span>
                             </label>
                     </div>
                 </div>
-
-
-                <!-- <div class="col-md border1 text-left">
-                    <form action="api/insert-product.php" method="post" id="insert-product-form"
-                        enctype="multipart/form-data">
-                        <div class="form-group row">
-                            <label class="col-3" for="price">Name</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                                    placeholder="Enter the name of the product">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-3" for="price">Price</label>
-                            <div class="col-9">
-                                <input type="text" class="form-control" id="price" name="price" aria-describedby="priceHelp"
-                                    placeholder="Enter the price of the product">
-                            </div>
-                        </div>
-                        <div class="form-check row">
-                            <div class="col">
-                                <input type="checkbox" class="form-check-input" id="check" name="sold" value="checked">
-                                <label class="form-check-label" for="check">Sold</label>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col">
-                                <label for="product-image">Image</label>
-                                <input type="file" class="form-control-file" id="product-image" name="image">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <button type="submit" name="submit" value="Submit Form" class="btn btn-primary row">Add
-                                    product</button>
-                            </div>
-                        </div>
-                    </form>
-    
-                </div> -->
-
             </div>
 
             <div class="col-md">
@@ -128,7 +87,7 @@
                             <div class="sw sw4">
                                 <img class="pic unit1" id="pic4">
                             </div>
-                            <div class="unit-info" id="unit-info1">U1</div>
+                            <div class="unit-info" id="unit-info1" onclick="show_products(1)">U1</div>
                         </div>
                         <div class="wood scale">
                             <div class="sw sw1">
@@ -143,7 +102,7 @@
                             <div class="sw sw4">
                                 <img class="pic unit2" id="pic8">
                             </div>
-                            <div class="unit-info" id="unit-info2">U2</div>
+                            <div class="unit-info" id="unit-info2" onclick="show_products(2)">U2</div>
                         </div>
                     </div>
                     <div class="floor middle-floor">
@@ -163,7 +122,7 @@
                             <div class="mid mid5">
                                 <img class="pic unit3" id="pic13">
                             </div>
-                            <div class="unit-info" id="unit-info3">U3</div>
+                            <div class="unit-info" id="unit-info3" onclick="show_products(3)">U3</div>
                         </div>
                     </div>
                     <div class="floor bottom-floor">
@@ -177,7 +136,7 @@
                             <div class="ultra ultra3">
                                 <img class="pic unit4" id="pic16">
                             </div>
-                            <div class="unit-info" id="unit-info4">U4</div>
+                            <div class="unit-info" id="unit-info4" onclick="show_products(4)">U4</div>
                         </div>
                         <div class="dis dis2 unit4">
                             <div class="ir ir1">
@@ -189,7 +148,7 @@
                             <div class="ir ir3">
                                 <img class="pic unit5" id="pic19">
                             </div>
-                            <div class="unit-info" id="unit-info5">U5</div>
+                            <div class="unit-info" id="unit-info5" onclick="show_products(5)">U5</div>
                         </div>
                     </div>
                 </div>

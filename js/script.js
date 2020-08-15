@@ -1,9 +1,12 @@
+var units_product_id = [0, 0, 0, 0, 0];
+
+
 window.onload = function() {
     load_shelf_status();
     load_shelf();
     load_commands();
-    load_products_list();
-    load_products();
+    // load_products_list();
+    // load_product();
 };
 window.setInterval(function() {
     // load_ambient();
@@ -102,6 +105,7 @@ function load_shelf() {
             $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
             $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
             $("#unit-info".concat(unit["id"])).html(unit["name"]);
+            units_product_id[index] = unit["product_id"];
         }
     });
 }
@@ -135,18 +139,7 @@ function load_products_list() {
     });
 }
 
-function load_shelf() {
-    var url = "api/read_units_products.php"
-    $.getJSON(url, function(response) {
-        for (let index = 0; index < response["units"].length; index++) {
-            const unit = response["units"][index];
-            // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
-            $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
-            $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
-            $("#unit-info".concat(unit["id"])).html(unit["name"]);
-        }
-    });
-}
+
 
 
 $('#lamp1').on('click', function() {
@@ -218,33 +211,8 @@ $('#alarm-off').on('click', function() {
     });
 });
 
-$("#insert-product-form").submit(function(event) {
-    event.preventDefault();
-    var enctype = $(this).attr("enctype");
-    var url = $(this).attr("action");
-    var form_data = new FormData(this);
 
-    // $.post("api/insert_product.php", form_data,
-    //     function(data, status) {
-    //         alert("Data: " + data + "\nStatus: " + status);
-    //     });
-
-    $.ajax({
-        method: 'POST',
-        enctype: enctype,
-        url: url,
-        data: form_data,
-        cache: false,
-        contentType: false,
-        processData: false,
-        timeout: 600000,
-        success: function(response) {
-            console.log(response);
-            $("#img").attr("src", response);
-            $(".preview img").show(); // Display image element
-        },
-        error: function(response) {
-            console.log(response);
-        }
-    });
-});
+function show_products(unitId) {
+    var url = `products.html?u=${unitId}`;
+    window.open(url, "_self");
+}

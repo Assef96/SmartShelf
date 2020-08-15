@@ -5,7 +5,7 @@ header("Content-Type: application/json; charset=UTF-8");
 $response = array();
  
 // Check if we got the field from the user
-if (isset($_POST['id']) && isset($_POST['price']) && isset($_POST['name'])) {
+if (isset($_POST['productId']) && isset($_POST['name'])) {
     $price = $_POST['price'];
     $name = $_POST['name'];
     $image = $_FILES['image']['name'];
@@ -19,7 +19,7 @@ if (isset($_POST['id']) && isset($_POST['price']) && isset($_POST['name'])) {
     // Connect to database:
     require_once("db_connect.php");
     
-    $sql = "UPDATE products SET price = '$price', name = '$name', image = '$image' WHERE id = '$id'";
+    $sql = "INSERT INTO products (sold, price, name, image) VALUES('$sold', '$price', '$name', '$image')";
     $result = mysqli_query($conn, $sql);
  
     if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {

@@ -46,6 +46,21 @@ i.sensor {
     color: blue;
 }
 
+i.command-icon {
+    font-size: 36px;
+    color: black;
+}
+
+i.icon-button {
+    cursor: pointer;
+    font-size: 20px;
+    color: black;
+}
+
+i.icon-button:hover {
+    color: red;
+}
+
 .product {
     font-size: 40px;
     color: green;
@@ -332,6 +347,7 @@ div.unit-info {
     color: black;
     /* border: 1px solid black; */
     font-size: 3vmin;
+    cursor: pointer;
 }
 
 div#unit-info1 {
