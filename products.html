@@ -32,81 +32,88 @@
 </head>
 
 <body>
-    <div class="container my-container text-center">
+    <div class="jumbotron">
 
-        <div class="row">
-            <div class="col">
-                <button type="button" onclick="edit_product(0)" class="btn btn-primary" data-toggle="modal"
-                    data-target="#exampleModal">
-                    New Product
-                </button>
+
+        <div class="container my-container text-center">
+
+            <div class="row">
+                <div class="col">
+                    <button type="button" onclick="edit_product(0)" class="btn btn-primary" data-toggle="modal"
+                        data-target="#exampleModal">
+                        New Product
+                    </button>
+                </div>
+                <div class="col">
+                    <button type="button" onclick="window.location='..';" class="btn btn-primary">
+                        Back to Shelf
+                    </button>
+                </div>
+                <!-- <img id="insert-product" src="img/plus.png" width="100" height="100"> -->
             </div>
-            <div class="col">
-                <button type="button" onclick="window.location='..';" class="btn btn-primary">
-                    Back to Shelf
-                </button>
+
+            <div class="row">
+                
+                <div class="card-group" id="products-list"></div>
             </div>
-            <!-- <img id="insert-product" src="img/plus.png" width="100" height="100"> -->
-        </div>
 
-        <div class="row" id="products-list"></div>
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+                <form action="api/insert_product.php" method="post" id="product-form" enctype="multipart/form-data"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">View and Edit</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row border1 text-left">
+                                    <div class="form-group row">
+                                        <label class="col-3" for="price">Name</label>
+                                        <div class="col-9">
+                                            <input type="text" class="form-control" id="name" name="name"
+                                                aria-describedby="nameHelp" placeholder="Enter the name of the product">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-3" for="price">Price</label>
+                                        <div class="col-9">
+                                            <input type="text" class="form-control" id="price" name="price"
+                                                aria-describedby="priceHelp"
+                                                placeholder="Enter the price of the product">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <label for="product-image">Image</label>
+                                            <input type="file" accept="image/png, image/jpeg" class="form-control-file"
+                                                id="product-image" name="image">
+                                        </div>
+                                    </div>
+                                    <div class='preview'>
+                                        <img src="img/placeholder.png" id="image-preview" width="150" height="150">
+                                    </div>
 
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-            <form action="api/insert_product.php" method="post" id="product-form" enctype="multipart/form-data"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">View and Edit</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row border1 text-left">
-                                <div class="form-group row">
-                                    <label class="col-3" for="price">Name</label>
-                                    <div class="col-9">
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            aria-describedby="nameHelp" placeholder="Enter the name of the product">
-                                    </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-3" for="price">Price</label>
-                                    <div class="col-9">
-                                        <input type="text" class="form-control" id="price" name="price"
-                                            aria-describedby="priceHelp" placeholder="Enter the price of the product">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <label for="product-image">Image</label>
-                                        <input type="file" accept="image/png, image/jpeg" class="form-control-file"
-                                            id="product-image" name="image">
-                                    </div>
-                                </div>
-                                <div class='preview'>
-                                    <img src="img/placeholder.png" id="image-preview" width="100" height="100">
-                                </div>
-
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" name="submit" value="Submit Form"
+                                    class="btn btn-primary">Save</button>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" name="submit" value="Submit Form"
-                                class="btn btn-primary">Save</button>
-                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
         </div>
-
-
-
     </div>
 
 
     <script>
+
         window.unitId = 0;
         var productId;
         window.onload = function () {
@@ -126,36 +133,30 @@
                     const name = product["name"];
                     const price = product["price"];
                     const image = product["image"];
-
-                    // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
-                    // $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
-                    // $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
-                    // $("#unit-info".concat(unit["id"])).html(unit["name"]);
-                    // onclick="location.href='api/set_product.php?u=${unitId}&p=${id}';"
-                    str += `<div class="row" id="products-list">
-            <div class="col col-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="card" style="width: 13rem;">
-                    <img src="img/${image}" class="card-img-top" alt="${image}">
-                    <div class="card-body">
-                        <h5 class="card-title">${name}</h5>
-                        <p class="card-text">id: ${id}</p>
-                        <p class="card-text">Price: ${price}</p>
-                        <div class="row">
-            <div class="col">
-                <span onclick="select_product(${id})" class="icon"><i class="fas fa-check-square icon-button"></i></span>
-            </div>
-            <div class="col">
-                <span  onclick="edit_product(${id})"class="icon" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-edit icon-button"></i></span>
-            </div>
-            <div class="col">
-                <span  onclick="" class="icon"><i class="fas fa-trash icon-button"></i></span>
-            </div>
-        </div>
-                        
-                    </div>
-                </div>
-            </div>
-        </div>`;
+                    str += `<div class="col mb-4">
+                                <div class="card text-white bg-info h-100" style="width: 15rem;">
+                                    <img src="img/${image}" class="card-img-top" alt="${image}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${name}</h5>
+                                        <p class="card-text">id: ${id}</p>
+                                        <p class="card-text">Price: ${price}</p>
+                                        <div class="card-footer">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <span onclick="select_product(${id})" class="icon"><i class="fas fa-check-square icon-button"></i></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span  onclick="edit_product(${id})"class="icon" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-edit icon-button"></i></span>
+                                                </div>
+                                                <div class="col">
+                                                    <span  onclick="" class="icon"><i class="fas fa-trash icon-button"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
                     $("#products-list").html(str);
                 }
             });
@@ -177,7 +178,6 @@
                 $("#price").attr("value", product["price"]);
             });
         }
-
 
         $("#product-form").submit(function (event) {
             event.preventDefault();
@@ -202,7 +202,6 @@
                     console.log(response);
                 }
             });
-            // window.open(".", "_self");
             location.reload();
         });
 
@@ -216,6 +215,7 @@
         }
 
     </script>
+
 </body>
 
 

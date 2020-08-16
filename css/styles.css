@@ -18,7 +18,7 @@ body {
 .my-container {
     justify-content: center;
     /* border: 1px solid green; */
-    background-color: lightgray;
+    /* background-color: lightgray; */
 }
 
 div {
@@ -69,11 +69,10 @@ i.icon-button:hover {
 }
 
 .sensor-value {
-    line-height: 60px;
     font-family: Helvetica;
-    color: #fff;
-    font-size: 30px;
-    display: inline;
+    color: black;
+    font-size: 3.5vmin;
+    /* display: inline; */
 }
 
 .sensor-icon {
@@ -94,28 +93,12 @@ i.icon-button:hover {
     padding-left: 10px;
 }
 
-.button {
-    background-color: #4CAF50;
-    /* Green */
-    border: none;
-    color: white;
-    padding: 16px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    -webkit-transition-duration: 0.4s;
-    /* Safari */
-    transition-duration: 0.4s;
-    cursor: pointer;
-}
 
 .switch {
     position: relative;
-    display: inline-block;
-    width: 60px;
-    height: 34px;
+    /* display: inline-block; */
+    width: 30px;
+    height: 17px;
 }
 
 .switch input {
@@ -139,10 +122,10 @@ i.icon-button:hover {
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 13px;
+    width: 13px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
     -webkit-transition: .4s;
     transition: .4s;
@@ -157,16 +140,16 @@ input:focus+.slider {
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(26px);
-    -ms-transform: translateX(26px);
-    transform: translateX(26px);
+    -webkit-transform: translateX(13px);
+    -ms-transform: translateX(13px);
+    transform: translateX(13px);
 }
 
 
 /* Rounded sliders */
 
 .slider.round {
-    border-radius: 34px;
+    border-radius: 17px;
 }
 
 .slider.round:before {
@@ -174,11 +157,11 @@ input:checked+.slider:before {
 }
 
 div.absolute {
-    position: absolute;
-    width: 100%;
-    left: 0%;
+    /* position: absolute; */
+    /* width: 100%; */
+    /* left: 0%; */
     /* height: 40%; */
-    border: 1px solid black;
+    /* border: 1px solid black; */
     padding-top: 100%;
     /* 4:3 Aspect Ratio */
     background-color: white;
@@ -346,7 +329,7 @@ div.unit-info {
     position: absolute;
     color: black;
     /* border: 1px solid black; */
-    font-size: 3vmin;
+    font-size: 2vmin;
     cursor: pointer;
 }
 
