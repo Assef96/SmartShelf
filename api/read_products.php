@@ -5,7 +5,7 @@ header("Content-Type: application/json; charset=UTF-8");
 // Connect to database:
 require_once("db_connect.php");
 
-$sql = "SELECT * FROM products";
+$sql = "SELECT * FROM products ORDER BY id DESC";
 $result = mysqli_query($conn, $sql) or die(mysqli_error($conn));
 
 if (mysqli_num_rows($result) > 0) {

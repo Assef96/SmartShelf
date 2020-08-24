@@ -18,8 +18,8 @@ const char *host = "192.168.1.104";
 const uint16_t port = 80;
 WiFiClient wifi;
 boolean wifiConnected = false;
-unsigned long lastConnectionTime = 0;			  // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 200L; // delay between updates, in milliseconds
+unsigned long lastLoopTime = 0;			  // last time you connected to the server, in milliseconds
+const unsigned long loopPeriod = 200L; // delay between updates, in milliseconds
 
 DHT dht;
 const int lightPin = A0;
@@ -68,9 +68,9 @@ void loop()
 	// if (!wifiConnected)
 	// 	return;
 
-	if (millis() - lastConnectionTime > postingInterval)
+	if (millis() - lastLoopTime > loopPeriod)
 	{
-		lastConnectionTime = millis();
+		lastLoopTime = millis();
     	ledStatus = !ledStatus;
 		digitalWrite(ledPin, ledStatus);
 
@@ -276,16 +276,16 @@ void readCommands()
 	}
 
 	// Extract values
-	String lamp1Status{responseDoc["commands"]["lamp1"].as<char *>()};
-	String lamp2Status{responseDoc["commands"]["lamp2"].as<char *>()};
+	String lampStatus{responseDoc["commands"]["lamp"].as<char *>()};
+	String fanStatus{responseDoc["commands"]["fan"].as<char *>()};
 	String buzzerStatus{responseDoc["commands"]["buzzer"].as<char *>()};
 	// Serial.println(responseDoc["time"].as<long>());
 	// Serial.println(responseDoc["data"][0].as<float>(), 6);
 
 	const size_t capacity2 = JSON_OBJECT_SIZE(9) + 50;
 	DynamicJsonDocument doc(capacity2);
-	doc["l1"] = lamp1Status == "1" ? 1 : 0;
-	doc["l2"] = lamp2Status == "1" ? 1 : 0;
+	doc["l"] = lampStatus == "1" ? 1 : 0;
+	doc["f"] = fanStatus == "1" ? 1 : 0;
 	doc["b"] = buzzerStatus == "1" ? 1 : 0;
 	Wire.beginTransmission(I2C_SLAVE);
 	Wire.write('c');

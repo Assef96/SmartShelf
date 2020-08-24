@@ -8,10 +8,10 @@ $response = array();
 $response["success"] = 0;
  
 // Check if we got the field from the user
-if (isset($_POST["lamp1"]))
-    $command = "lamp1";
-elseif (isset($_POST["lamp2"]))
-    $command = "lamp2";
+if (isset($_POST["lamp"]))
+    $command = "lamp";
+elseif (isset($_POST["fan"]))
+    $command = "fan";
 elseif (isset($_POST["buzzer"]))
 $command = "buzzer";
 else {

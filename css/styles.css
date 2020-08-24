@@ -1,3 +1,18 @@
+.bd-placeholder-img {
+    font-size: 1.125rem;
+    text-anchor: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  @media (min-width: 768px) {
+    .bd-placeholder-img-lg {
+      font-size: 3.5rem;
+    }
+  }
+
 .title {
     font-family: Helvetica;
     color: black;
@@ -8,7 +23,7 @@ body {
 }
 
 .transparent {
-    opacity: 0.5;
+    opacity: 0.2;
 }
 
 .product-pic {
@@ -21,11 +36,7 @@ body {
     /* background-color: lightgray; */
 }
 
-div {
-    /* border: 1px solid black; */
-}
-
-div.col {
+/* div.col {
     margin-left: 5px;
     margin-right: 5px;
 }
@@ -33,12 +44,12 @@ div.col {
 div.row {
     margin-top: 5px;
     margin-bottom: 5px;
-}
+} */
 
 .border1 {
     border: 1px solid black;
-    padding: 10px;
-    margin: 10px;
+    /* padding: 10px; */
+    /* margin: 10px; */
 }
 
 i.sensor {
@@ -48,18 +59,33 @@ i.sensor {
 
 i.command-icon {
     font-size: 36px;
-    color: black;
+}
+
+i#connection-icon {
+    font-size: 24px;
 }
 
 i.icon-button {
     cursor: pointer;
-    font-size: 20px;
-    color: black;
+    font-size: 24px;
+    color: lightseagreen;
 }
 
 i.icon-button:hover {
     color: red;
 }
+
+i.insert-icon {
+    cursor: pointer;
+    font-size: 120px;
+    vertical-align: middle;
+    color: white;
+}
+
+i.insert-icon:hover {
+    color: red;
+}
+
 
 .product {
     font-size: 40px;
@@ -69,17 +95,17 @@ i.icon-button:hover {
 }
 
 .sensor-value {
-    font-family: Helvetica;
-    color: black;
-    font-size: 3.5vmin;
+    /* font-family: Helvetica; */
+    /* color: black; */
+    /* font-size: 3.5vmin; */
     /* display: inline; */
 }
 
-.sensor-icon {
+/* .sensor-icon {
     height: 40px;
     width: 40px;
     vertical-align: middle;
-}
+} */
 
 .center {
     background: #c0c5ce;
@@ -97,8 +123,8 @@ i.icon-button:hover {
 .switch {
     position: relative;
     /* display: inline-block; */
-    width: 30px;
-    height: 17px;
+    width: 44px;
+    height: 24px;
 }
 
 .switch input {
@@ -122,8 +148,8 @@ i.icon-button:hover {
 .slider:before {
     position: absolute;
     content: "";
-    height: 13px;
-    width: 13px;
+    height: 20px;
+    width: 20px;
     left: 2px;
     bottom: 2px;
     background-color: white;
@@ -132,17 +158,17 @@ i.icon-button:hover {
 }
 
 input:checked+.slider {
-    background-color: #2196F3;
+    background-color: seagreen;
 }
 
 input:focus+.slider {
-    box-shadow: 0 0 1px #2196F3;
+    box-shadow: 0 0 1px lightseagreen;
 }
 
 input:checked+.slider:before {
-    -webkit-transform: translateX(13px);
-    -ms-transform: translateX(13px);
-    transform: translateX(13px);
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
 }
 
 
@@ -162,26 +188,28 @@ div.absolute {
     /* left: 0%; */
     /* height: 40%; */
     /* border: 1px solid black; */
-    padding-top: 100%;
+    padding-top: 110%;
     /* 4:3 Aspect Ratio */
     background-color: white;
+    border-radius: 3px;
 }
 
 div.floor {
     position: absolute;
-    right: 7%;
-    width: 86%;
-    height: 30%;
+    right: 5%;
+    width: 90%;
+    height: 29%;
     /* border: 3px solid #2a21ad; */
     background-color: khaki;
+    border-radius: 3px;
 }
 
 div.top-floor {
-    top: 2%;
+    top: 4%;
 }
 
 div.middle-floor {
-    top: 34%;
+    top: 35.5%;
 }
 
 div.bottom-floor {
@@ -194,7 +222,8 @@ div.wood {
     width: 35%;
     height: 76%;
     /* border: 3px solid #73AD21; */
-    background-color: burlywood
+    background-color: burlywood;
+    border-radius: 3px;
 }
 
 div.switches {
@@ -209,27 +238,28 @@ div.sw {
     position: absolute;
     width: 32%;
     height: 42%;
+    border-radius: 3px;
     /* border: 2px solid #ad2121; */
 }
 
 div.sw1 {
-    top: 4%;
-    left: 7%;
+    bottom: 4%;
+    right: 7%;
 }
 
 div.sw2 {
-    top: 4%;
-    right: 7%;
-}
-
-div.sw3 {
     bottom: 4%;
     left: 7%;
 }
 
-div.sw4 {
-    bottom: 4%;
+div.sw3 {
+    top: 4%;
     right: 7%;
+}
+
+div.sw4 {
+    top: 4%;
+    left: 7%;
 }
 
 div.light {
@@ -238,6 +268,7 @@ div.light {
     height: 38%;
     left: 3%;
     top: 28%;
+    border-radius: 3px;
     /* border: 1px solid #2136ad; */
 }
 
@@ -246,6 +277,7 @@ div.mid {
     width: 13%;
     height: 90%;
     top: 5%;
+    border-radius: 3px;
     /* border: 2px solid #000000; */
 }
 
@@ -274,6 +306,7 @@ div.dis {
     width: 14%;
     height: 94%;
     top: 3%;
+    border-radius: 3px;
     /* border: 1px solid #4621ad; */
 }
 
@@ -328,8 +361,8 @@ div.ir3 {
 div.unit-info {
     position: absolute;
     color: black;
-    /* border: 1px solid black; */
-    font-size: 2vmin;
+    font-size: 2.5vh;
+    font-weight: bold;
     cursor: pointer;
 }
 
@@ -368,4 +401,5 @@ div#unit-info5 {
 img.pic {
     width: 90%;
     border: 0.5px solid brown;
+    border-radius: 3px;
 }

@@ -1,30 +1,28 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <Wire.h>
+#include <SoftwareI2C.h>
 #include <LiquidCrystal_I2C.h> // Library for LCD
-#include "SoftwareI2C.h"
 #include <dht11.h>
 #include <HX711.h>
-// #define Serial SerialUSB
-// Wiring: SDA pin is connected to A4 and SCL pin to A5.
-// Connect to LCD via I2C, default address 0x27 (A0-A2 not jumpered)
-SoftwareI2C WireS1;
-LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F, 16, 2); // Change to (0x27,16,2) for 16x2 LCD.
 
+////////////////// Global Objects and Variables: //////////////////////
+SoftwareI2C WireS1;
+LiquidCrystal_I2C lcd = LiquidCrystal_I2C(0x3F, 16, 2);
 HX711 scale;
 
-//  SDA_PIN A4 and SCL_PIN A5
 const int8_t I2C_MASTER = 0x42;
 const int8_t I2C_SLAVE = 0x08;
 const uint8_t I2C_BUFFER_LENGHT = 80;
 char command;
 
 unsigned long wakeUpTime = 3000L; 
-unsigned long lastConnectionTime = 0;			  // last time you connected to the server, in milliseconds
-const unsigned long postingInterval = 3000L; // delay between updates, in milliseconds
+unsigned long lastLoopTime = 0;			  // last time you connected to the server, in milliseconds
+const unsigned long loopPeriod = 3000L; // delay between updates, in milliseconds
 
 bool ledStatus;
 
+///////////////////// Pin Map: ////////////////////
 // const int rxPin = 0;
 // const int txPin = 1;
 const int trigPin = 2;
@@ -34,14 +32,13 @@ const int scalePinSCK = 5; // vice versa
 const int lcdPinSCK = 6;
 const int lcdPinSDA = 7;
 const int buzzerPin = 8;
-const int lamp2Pin = 9;
-const int lamp1Pin = 10;
+const int fanPin = 9;
+const int lampPin = 10;
 const int photoModulePin = 11;
 const int irModulePin = 12;
 const int ledPin = 13;
-
-const int photo1Pin = A1;
 const int photo2Pin = A0;
+const int photo1Pin = A1;
 const int irPin = A2;
 const int irDistancePin = A3;
 // const int sdaPin = A4;
@@ -61,6 +58,7 @@ const bool debugSensors = true;
 bool isReady = false;
 bool buzzerOn = true;
 
+///////////////////// Function Definition: /////////////////////
 void receiveEvent(int numBytes);
 void requestEvent();
 void sendResponse(char buffer[]);
@@ -72,7 +70,6 @@ void readSensorsProducts(DynamicJsonDocument& doc);
 void updateSensorsStatus();
 int detectChangedUnit();
 void displayChangedUnit();
-float oldDistance = 0;
 
 void setup()
 {
@@ -94,10 +91,10 @@ void setup()
 
 	pinMode(buzzerPin, OUTPUT);
 	pinMode(ledPin, OUTPUT);
-	pinMode(lamp1Pin, OUTPUT);
-	pinMode(lamp2Pin, OUTPUT);
-	digitalWrite(lamp1Pin, HIGH);
-	digitalWrite(lamp2Pin, HIGH);
+	pinMode(lampPin, OUTPUT);
+	pinMode(fanPin, OUTPUT);
+	digitalWrite(lampPin, HIGH);
+	digitalWrite(fanPin, HIGH);
 	pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
 	pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 
@@ -128,12 +125,12 @@ void setup()
 
 void loop()
 {
-	if (millis() - lastConnectionTime > postingInterval)
+	if (millis() - lastLoopTime > loopPeriod)
 	{
-		if (lastConnectionTime > wakeUpTime)
+		if (lastLoopTime > wakeUpTime)
 			isReady = true;
 		
-		lastConnectionTime = millis();
+		lastLoopTime = millis();
 		ledStatus = !ledStatus;
 		digitalWrite(ledPin, ledStatus);
 		displayChangedUnit();
@@ -235,11 +232,11 @@ void sendResponse(char buffer[])
 
 void readCommands(DynamicJsonDocument& doc)
 {
-	int lamp1Status{doc["l1"].as<int>()};
-	int lamp2Status{doc["l2"].as<int>()};
+	int lampStatus{doc["l"].as<int>()};
+	int fanStatus{doc["f"].as<int>()};
 	buzzerOn = doc["b"].as<int>();
-	digitalWrite(lamp1Pin, !lamp1Status);
-	digitalWrite(lamp2Pin, !lamp2Status);
+	digitalWrite(lampPin, !lampStatus);
+	digitalWrite(fanPin, !fanStatus);
 }
 
 void readSensorsProducts(DynamicJsonDocument& doc)
@@ -316,24 +313,79 @@ void updateSensorsStatus()
 		interrupts();
 		distance = duration * 0.0343 / 2;
 		totalDistance += distance;
-		delay(1);
+		delay(10);
 		// Serial.print(distance);
 		// Serial.print("  ");
 	}
 	// Serial.println();
 	distance = totalDistance / 10;
 	// Serial.print(distance);
-	if (distance > 19)
+	if (distance >= 18.34)
 	{
 		sensorsStatus[10] = 0;
 	}
+	else if (distance >= 16.09 && distance < 18.34)
+	{
+		sensorsStatus[10] = 1;
+	}
+	else if (distance >= 13.65 && distance < 16.09)
+	{
+		sensorsStatus[10] = 2;
+	}
+	else if (distance >= 10 && distance < 13.65)
+	{
+		sensorsStatus[10] = 3;
+	}
 	else
 	{
-		sensorsStatus[10] = int((19 - distance) / 5);
+		sensorsStatus[10] = 0;
 	}
+
+	float irDistance{};
+	float totalIrDistance{};
+	for (size_t i = 0; i < 10; i++)
+	{
+		irDistance = analogRead(irDistancePin);
+		totalIrDistance += irDistance;
+		delay(1);
+		Serial.print(irDistance);
+		Serial.print("  ");
+	}
+	Serial.println();
+	irDistance = totalIrDistance / 10;
+	Serial.print(irDistance);
+	// if (distance > 19)
+	// {
+	// 	sensorsStatus[10] = 0;
+	// }
+	// else
+	// {
+	// 	sensorsStatus[10] = int((19 - distance) / 5);
+	// }
 	
 	int irDistanceValue = analogRead(irDistancePin);
 	sensorsStatus[11] = irDistanceValue < 400 ? true : false;
+
+	if (irDistanceValue >= 800)
+	{
+		sensorsStatus[11] = 0;
+	}
+	else if (irDistanceValue >= 704 && irDistanceValue < 800)
+	{
+		sensorsStatus[10] = 1;
+	}
+	else if (irDistanceValue >= 660 && irDistanceValue < 704)
+	{
+		sensorsStatus[11] = 2;
+	}
+	else if (irDistanceValue >= 500 && irDistanceValue < 660)
+	{
+		sensorsStatus[11] = 3;
+	}
+	else
+	{
+		sensorsStatus[11] = 0;
+	}
 
 	if (debugSensors)
 	{

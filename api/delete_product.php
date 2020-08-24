@@ -5,34 +5,20 @@ header("Content-Type: application/json; charset=UTF-8");
 $response = array();
  
 // Check if we got the field from the user
-if (isset($_POST['productId']) && isset($_POST['name'])) {
-    $price = $_POST['price'];
-    $name = $_POST['name'];
-    $image = $_FILES['image']['name'];
-    if(isset($_POST['sold']))
-    $sold = 1;
-    else
-    $sold = 0;
-
-    $target = "../img/".basename($image);
+if (isset($_POST['id'])) {
+    $id = $_POST['id'];
 
     // Connect to database:
     require_once("db_connect.php");
     
-    $sql = "INSERT INTO products (sold, price, name, image) VALUES('$sold', '$price', '$name', '$image')";
+    $sql = "DELETE FROM products WHERE id = {$id}";
     $result = mysqli_query($conn, $sql);
  
-    if (move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
-        $response["image_message"] = "Image uploaded successfully";
-    } else {
-        $response["image_message"]  = "Failed to upload image";
-    }
-
     // Check for succesfull execution of query
     if ($result) {
         // successfully inserted 
         $response["success"] = 1;
-        $response["message"] = "Product successfully created.";
+        $response["message"] = "Product successfully removed.";
     } else {
         // Failed to insert data in database
         $response["success"] = 0;

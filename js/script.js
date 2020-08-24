@@ -4,7 +4,7 @@ window.onload = function() {
     load_commands();
 };
 window.setInterval(function() {
-    // load_shelf_status();
+    load_shelf_status();
 }, 200);
 
 
@@ -15,14 +15,22 @@ function load_shelf_status() {
         var temperature = (response['ambient']['temperature']);
         var light = (response['ambient']['light']);
         var time = (response['ambient']['time']);
-        $("#temperature").html(temperature);
-        $("#humidity").html(humidity);
-        $("#light").html(light);
+        $("#temperature").html(temperature + "&#8451;");
+        $("#humidity").html(humidity + "%");
+        $("#light").html(light + "%");
         var timeDifference = Date.now() - Date.parse(time);
         if (timeDifference < 10000)
-            $("#connection-status").html("Connected");
+        {
+            $("#connection-status").html("Shelf is connected.");
+            $("#connection-icon").removeClass(["fa-times-circle", "text-danger"]);
+            $("#connection-icon").addClass(["fa-check-circle", "text-success"]);
+        }
         else
-            $("#connection-status").html("Not Connected");
+        {
+            $("#connection-status").html("Shelf is not connected.");
+            $("#connection-icon").addClass(["fa-times-circle", "text-danger"]);
+            $("#connection-icon").removeClass(["fa-check-circle", "text-success"]);
+        }
     });
 
     var url = "api/read_sensors.php"
@@ -33,39 +41,39 @@ function load_shelf_status() {
             var status = parseInt(sensor["status"]);
             if (id <= 4) {
                 if (status == 0)
-                    $("#pic".concat(id)).addClass("transparent");
+                    $("#pic" + id).addClass("transparent");
                 else
-                    $("#pic".concat(id)).removeClass("transparent");
+                    $("#pic" + id).removeClass("transparent");
             }
             if (id == 5) {
                 if (status > 4)
                     status = 4;
                 for (let i = 5; i < 5 + status; i++)
-                    $("#pic".concat(i)).removeClass("transparent");
+                    $("#pic" + i).removeClass("transparent");
                 for (let i = 5 + status; i <= 8; i++)
-                    $("#pic".concat(i)).addClass("transparent");
+                    $("#pic" + i).addClass("transparent");
             }
             if (id >= 6 && id <= 10) {
                 if (status == 0)
-                    $("#pic".concat(id + 3)).addClass("transparent");
+                    $("#pic" + (id + 3)).addClass("transparent");
                 else
-                    $("#pic".concat(id + 3)).removeClass("transparent");
+                    $("#pic" + (id + 3)).removeClass("transparent");
             }
             if (id == 11) {
                 if (status > 3)
                     status = 3;
                 for (let i = 14; i < 14 + status; i++)
-                    $("#pic".concat(i)).removeClass("transparent");
+                    $("#pic" + i).removeClass("transparent");
                 for (let i = 14 + status; i <= 16; i++)
-                    $("#pic".concat(i)).addClass("transparent");
+                    $("#pic" + i).addClass("transparent");
             }
             if (id == 12) {
                 if (status > 3)
                     status = 3;
                 for (let i = 17; i < 17 + status; i++)
-                    $("#pic".concat(i)).removeClass("transparent");
+                    $("#pic" + i).removeClass("transparent");
                 for (let i = 17 + status; i <= 19; i++)
-                    $("#pic".concat(i)).addClass("transparent");
+                    $("#pic" + i).addClass("transparent");
             }
         }
     });
@@ -76,10 +84,9 @@ function load_shelf() {
     $.getJSON(url, function(response) {
         for (let index = 0; index < response["units"].length; index++) {
             const unit = response["units"][index];
-            // $(".pic.unit".concat(unit["id"])).attr("src", "img/placeholder.png");
-            $(".pic.unit".concat(unit["id"])).attr("src", "img/".concat(unit["image"]));
-            $(".pic.unit".concat(unit["id"])).attr("alt", unit["name"]);
-            $("#unit-info".concat(unit["id"])).html(unit["name"]);
+            $(".pic.unit" + unit["id"]).attr("src", "img/" + unit["image"]);
+            $(".pic.unit" + unit["id"]).attr("alt", unit["name"]);
+            $("#unit-info" + unit["id"]).html(unit["name"]);
         }
     });
 }
@@ -87,13 +94,13 @@ function load_shelf() {
 function load_commands() {
     var url = "api/read_commands.php"
     $.getJSON(url, function(response) {
-        var lamp1 = (response['commands']['lamp1']);
-        if (lamp1 == '1') {
-            $("#lamp1").prop("checked", true);
+        var lamp = (response['commands']['lamp']);
+        if (lamp == '1') {
+            $("#lamp").prop("checked", true);
         }
-        var lamp2 = (response['commands']['lamp2']);
-        if (lamp2 == '1') {
-            $("#lamp2").prop("checked", true);
+        var fan = (response['commands']['fan']);
+        if (fan == '1') {
+            $("#fan").prop("checked", true);
         }
         var buzzer = (response['commands']['buzzer']);
         if (buzzer == '1') {

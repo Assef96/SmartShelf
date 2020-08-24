@@ -30,23 +30,6 @@ if ($result) {
 else {
     $response["success"] = 0;
 }
-
-	// // Storing the returned array in response
-    // $response["commands"] = array();
- 
-	// // While loop to store all the returned response in variable
-    // while ($row = mysqli_fetch_array($result)) {
-    //     // temperoary user array
-    //     $commands = array();
-    //     $commands["id"] = $row["id"];
-    //     $commands["lamp1"] = (int)$row["lamp1"];
-    //     $commands["lamp2"] = (int)$row["lamp2"];
-    //     $commands["buzzer"] = (int)$row["buzzer"];
-	// 	// Push all the items 
-    //     array_push($response["commands"], $commands);
-    // }
-    // On success
-    
  
     // Show JSON response
     echo json_encode($response);

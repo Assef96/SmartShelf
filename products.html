@@ -1,222 +1,117 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta http-equiv="Access-Control-Allow-Origin" content="*">
-    <title>Smart Shelf</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Assef Ghamisi">
+  <meta name="generator" content="Assef Ghamisi">
+  <!-- <meta http-equiv="Access-Control-Allow-Origin" content="*"> -->
+  <title>Smart Shelf</title>
+  <link rel="icon" href="img/favicon.png" type="image/png">
+  <link rel="canonical" href="https://github.com/Assef96/SmartShelf/">
 
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/fontawesome/css/all.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> -->
-    <!-- <script src="https://kit.fontawesome.com/a076d05399.js"></script> -->
-    <!-- <link href="css/bootstrap4-toggle.min.css" rel="stylesheet">
-    <script src="js/bootstrap4-toggle.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script> -->
-    <!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
+  <link rel="stylesheet" href="css/fontawesome/css/all.css">
+  <link rel="stylesheet" href="starter-template.css">
+  <link rel="stylesheet" href="css/styles.css">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-        crossorigin="anonymous"></script>
+  <!-- <script src="js/jquery-3.4.1.min.js"></script> -->
+  <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+    integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+    integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+    crossorigin="anonymous"></script>
 
 </head>
 
 <body>
-    <div class="jumbotron">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href=".">
+      <img src="/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
+      Smart Shelf
+    </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+    aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
 
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Dashboard</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/products.html">Products</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about.html">About</a>
+      </li>
+    </ul>
+  </div>
+</nav>
 
-        <div class="container my-container text-center">
+  <main role="main" class="container my-container text-center bg-secondary p-3">
+    <div class="row card-group p-md-2" id="products-list"></div>
 
-            <div class="row">
-                <div class="col">
-                    <button type="button" onclick="edit_product(0)" class="btn btn-primary" data-toggle="modal"
-                        data-target="#exampleModal">
-                        New Product
-                    </button>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
+      <form action="api/insert_product.php" method="post" id="product-form" enctype="multipart/form-data"
+        aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">View and Edit</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row border1 text-left">
+                <div class="form-group row">
+                  <label class="col-3" for="price">Name</label>
+                  <div class="col-9">
+                    <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
+                      placeholder="Enter the name of the product">
+                  </div>
                 </div>
-                <div class="col">
-                    <button type="button" onclick="window.location='..';" class="btn btn-primary">
-                        Back to Shelf
-                    </button>
+                <div class="form-group row">
+                  <label class="col-3" for="price">Price</label>
+                  <div class="col-9">
+                    <input type="text" class="form-control" id="price" name="price" aria-describedby="priceHelp"
+                      placeholder="Enter the price of the product">
+                  </div>
                 </div>
-                <!-- <img id="insert-product" src="img/plus.png" width="100" height="100"> -->
+                <div class="form-group row">
+                  <div class="col">
+                    <label for="product-image">Image</label>
+                    <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="product-image"
+                      name="image">
+                  </div>
+                </div>
+                <div class='preview'>
+                  <img src="img/placeholder.png" id="image-preview" width="150" height="150">
+                </div>
+
+              </div>
             </div>
-
-            <div class="row">
-                
-                <div class="card-group" id="products-list"></div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" name="submit" value="Submit Form" class="btn btn-primary">Save</button>
             </div>
-
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel">
-                <form action="api/insert_product.php" method="post" id="product-form" enctype="multipart/form-data"
-                    aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">View and Edit</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="row border1 text-left">
-                                    <div class="form-group row">
-                                        <label class="col-3" for="price">Name</label>
-                                        <div class="col-9">
-                                            <input type="text" class="form-control" id="name" name="name"
-                                                aria-describedby="nameHelp" placeholder="Enter the name of the product">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <label class="col-3" for="price">Price</label>
-                                        <div class="col-9">
-                                            <input type="text" class="form-control" id="price" name="price"
-                                                aria-describedby="priceHelp"
-                                                placeholder="Enter the price of the product">
-                                        </div>
-                                    </div>
-                                    <div class="form-group row">
-                                        <div class="col">
-                                            <label for="product-image">Image</label>
-                                            <input type="file" accept="image/png, image/jpeg" class="form-control-file"
-                                                id="product-image" name="image">
-                                        </div>
-                                    </div>
-                                    <div class='preview'>
-                                        <img src="img/placeholder.png" id="image-preview" width="150" height="150">
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" name="submit" value="Submit Form"
-                                    class="btn btn-primary">Save</button>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
+          </div>
         </div>
+      </form>
     </div>
 
+  </main>
 
-    <script>
-
-        window.unitId = 0;
-        var productId;
-        window.onload = function () {
-            load_products_list();
-        };
-
-        function load_products_list() {
-            var parameters = location.search.substring(1).split("&");
-            var temp = parameters[0].split("=");
-            window.unitId = unescape(temp[1]);
-            var url = "api/read_products.php"
-            $.getJSON(url, function (response) {
-                var str = '';
-                for (let index = 0; index < response["products"].length; index++) {
-                    const product = response["products"][index];
-                    const id = product["id"];
-                    const name = product["name"];
-                    const price = product["price"];
-                    const image = product["image"];
-                    str += `<div class="col mb-4">
-                                <div class="card text-white bg-info h-100" style="width: 15rem;">
-                                    <img src="img/${image}" class="card-img-top" alt="${image}">
-                                    <div class="card-body">
-                                        <h5 class="card-title">${name}</h5>
-                                        <p class="card-text">id: ${id}</p>
-                                        <p class="card-text">Price: ${price}</p>
-                                        <div class="card-footer">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <span onclick="select_product(${id})" class="icon"><i class="fas fa-check-square icon-button"></i></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span  onclick="edit_product(${id})"class="icon" data-toggle="modal" data-target="#exampleModal"><i class="fas fa-edit icon-button"></i></span>
-                                                </div>
-                                                <div class="col">
-                                                    <span  onclick="" class="icon"><i class="fas fa-trash icon-button"></i></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>`;
-                    $("#products-list").html(str);
-                }
-            });
-        }
-
-        function edit_product(i) {
-            productId = i;
-            if (i == 0) {
-                $("#image-preview").attr("src", "img/placeholder.png");
-                $("#name").attr("value", "");
-                $("#price").attr("value", "");
-                return;
-            }
-            var url = `api/read_product.php?id=${productId}`;
-            $.getJSON(url, function (response) {
-                const product = response["product"];
-                $("#image-preview").attr("src", `img/${product["image"]}`);
-                $("#name").attr("value", product["name"]);
-                $("#price").attr("value", product["price"]);
-            });
-        }
-
-        $("#product-form").submit(function (event) {
-            event.preventDefault();
-            var enctype = $(this).attr("enctype");
-            var url = `api/edit_or_insert_product.php?id=${productId}`
-            var form_data = new FormData(this);
-
-            $.ajax({
-                method: 'POST',
-                enctype: enctype,
-                url: url,
-                data: form_data,
-                cache: false,
-                contentType: false,
-                processData: false,
-                timeout: 600000,
-                success: function (response) {
-                    console.log(response);
-                    edit_product();
-                },
-                error: function (response) {
-                    console.log(response);
-                }
-            });
-            location.reload();
-        });
-
-        function select_product(productId) {
-            var url = "api/set_product.php";
-            var form_data = { "unitId": window.unitId, "productId": productId };
-            $.post(url, form_data, function (result) {
-                console.log(result);
-            });
-            window.open("..", "_self");
-        }
-
-    </script>
-
+  <script src="js/product-script.js"></script>
 </body>
-
 
 </html>
