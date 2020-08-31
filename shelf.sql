@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 16, 2020 at 07:55 PM
+-- Generation Time: Aug 31, 2020 at 11:36 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.2
 
@@ -36,6 +36,13 @@ CREATE TABLE `ambient` (
   `time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `ambient`
+--
+
+INSERT INTO `ambient` (`id`, `temperature`, `humidity`, `light`, `time`) VALUES
+(1, 23, 70, 5, '2020-08-31 09:35:04');
+
 -- --------------------------------------------------------
 
 --
@@ -44,8 +51,8 @@ CREATE TABLE `ambient` (
 
 CREATE TABLE `commands` (
   `id` int(255) NOT NULL,
-  `lamp1` tinyint(1) NOT NULL,
-  `lamp2` tinyint(1) NOT NULL,
+  `lamp` tinyint(1) NOT NULL,
+  `fan` tinyint(1) NOT NULL,
   `buzzer` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -53,8 +60,8 @@ CREATE TABLE `commands` (
 -- Dumping data for table `commands`
 --
 
-INSERT INTO `commands` (`id`, `lamp1`, `lamp2`, `buzzer`) VALUES
-(1, 1, 1, 1);
+INSERT INTO `commands` (`id`, `lamp`, `fan`, `buzzer`) VALUES
+(1, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -67,7 +74,7 @@ CREATE TABLE `products` (
   `sold` tinyint(1) NOT NULL,
   `price` int(255) NOT NULL,
   `name` varchar(20) NOT NULL,
-  `image` varchar(16) NOT NULL
+  `image` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -75,9 +82,18 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `sold`, `price`, `name`, `image`) VALUES
-(1, 0, 4000, 'Tomato', 'tomato.png'),
-(2, 0, 4000, 'Cucumber', 'cucumber.png'),
-(3, 1, 1700, 'Carrot', 'carrot.png');
+(2, 0, 13, 'Tea Glass', 'tea glass.jpg'),
+(10, 0, 4, 'Shot Glass', 'shot glass.jpg'),
+(34, 1, 7, 'Tiny Cup', 'ceramic tiny cup.jpg'),
+(38, 0, 23, 'Blue Bowl', 'Blue Bowl.jpg'),
+(42, 0, 12, 'Ceramic Plate', 'White Plate.jpg'),
+(59, 0, 18, 'Flower Plate', 'Flower Plate.jpg'),
+(71, 0, 20, 'Spoon & Fork', 'Spoon & Fork.jpg'),
+(72, 0, 27, 'Ceramic Bowl', 'bowl.jpg'),
+(75, 0, 12, 'Square Plate', 'square plate.jpg'),
+(86, 0, 16, 'Scoop', 'Scoop.jpg'),
+(115, 0, 18, 'Salt Shaker', 'Salt Shaker.jpg'),
+(147, 0, 15, 'Ceramic Cup', 'ceramic cup.jpg');
 
 -- --------------------------------------------------------
 
@@ -96,18 +112,18 @@ CREATE TABLE `sensors` (
 --
 
 INSERT INTO `sensors` (`id`, `status`, `unit_id`) VALUES
-(1, 0, 1),
-(2, 0, 1),
-(3, 0, 1),
-(4, 0, 1),
-(5, 0, 2),
-(6, 0, 3),
-(7, 0, 3),
-(8, 0, 3),
-(9, 0, 3),
-(10, 0, 3),
-(11, 0, 4),
-(12, 0, 5);
+(1, 1, 1),
+(2, 1, 1),
+(3, 1, 1),
+(4, 1, 1),
+(5, 4, 2),
+(6, 1, 3),
+(7, 1, 3),
+(8, 1, 3),
+(9, 1, 3),
+(10, 1, 3),
+(11, 3, 4),
+(12, 3, 5);
 
 -- --------------------------------------------------------
 
@@ -125,11 +141,11 @@ CREATE TABLE `units` (
 --
 
 INSERT INTO `units` (`id`, `product_id`) VALUES
-(1, 1),
 (3, 2),
-(4, 2),
-(2, 3),
-(5, 3);
+(1, 10),
+(2, 34),
+(5, 72),
+(4, 75);
 
 --
 -- Indexes for dumped tables
@@ -175,7 +191,7 @@ ALTER TABLE `units`
 -- AUTO_INCREMENT for table `ambient`
 --
 ALTER TABLE `ambient`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `commands`
@@ -187,7 +203,7 @@ ALTER TABLE `commands`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=112;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=150;
 
 --
 -- AUTO_INCREMENT for table `sensors`
@@ -204,6 +220,12 @@ ALTER TABLE `units`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `sensors`
+--
+ALTER TABLE `sensors`
+  ADD CONSTRAINT `sensors_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `units` (`id`) ON UPDATE CASCADE;
 
 --
 -- Constraints for table `units`

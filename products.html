@@ -13,7 +13,6 @@
   <link rel="canonical" href="https://github.com/Assef96/SmartShelf/">
 
   <link rel="stylesheet" href="css/fontawesome/css/all.css">
-  <link rel="stylesheet" href="starter-template.css">
   <link rel="stylesheet" href="css/styles.css">
 
   <!-- <script src="js/jquery-3.4.1.min.js"></script> -->
@@ -32,7 +31,7 @@
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
     <a class="navbar-brand" href=".">
       <img src="/img/logo.png" width="30" height="30" class="d-inline-block align-top" alt="">
       Smart Shelf
@@ -64,45 +63,47 @@
       <form action="api/insert_product.php" method="post" id="product-form" enctype="multipart/form-data"
         aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
+          <div class="modal-content bg-secondary">
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">View and Edit</h5>
+              <h5 class="modal-title text-white" id="exampleModalLabel">Manage Product</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-              <div class="row border1 text-left">
+              <div class="text-left bg-dark p-4 rounded">
+                <div class="form-group row preview text-center">
+                  <div class="col">
+                    <img class="rounded" src="img/placeholder.png" id="image-preview" width="150" height="150">
+                  </div>
+                </div>
                 <div class="form-group row">
-                  <label class="col-3" for="price">Name</label>
+                  <label class="col-3 text-white" for="price">Name</label>
                   <div class="col-9">
                     <input type="text" class="form-control" id="name" name="name" aria-describedby="nameHelp"
-                      placeholder="Enter the name of the product">
+                      placeholder="Enter Product Name.">
                   </div>
                 </div>
                 <div class="form-group row">
-                  <label class="col-3" for="price">Price</label>
+                  <label class="col-3 text-white" for="price">Price</label>
                   <div class="col-9">
                     <input type="text" class="form-control" id="price" name="price" aria-describedby="priceHelp"
-                      placeholder="Enter the price of the product">
+                      placeholder="Enter Product Price.">
                   </div>
                 </div>
                 <div class="form-group row">
-                  <div class="col">
-                    <label for="product-image">Image</label>
+                  <label class="col-3 text-white" for="product-image">Image</label>
+                  <div class="col-9 text-white">
                     <input type="file" accept="image/png, image/jpeg" class="form-control-file" id="product-image"
                       name="image">
                   </div>
-                </div>
-                <div class='preview'>
-                  <img src="img/placeholder.png" id="image-preview" width="150" height="150">
                 </div>
 
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="submit" name="submit" value="Submit Form" class="btn btn-primary">Save</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              <button type="submit" name="submit" value="Submit Form" class="btn btn-success">Save</button>
             </div>
           </div>
         </div>

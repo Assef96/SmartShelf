@@ -10,13 +10,12 @@ function load_products_list() {
     window.unitId = unescape(temp[1]);
     var url = "api/read_products.php"
     $.getJSON(url, function (response) {
-        var str = "";
-    //     var str = `<div class="col-lg-2 col-md-3 col-5 mb-4">
-    //                 <div class="card text-white bg-dark h-100">
-    //                     <span class="icon card-img" style="margin: auto;" onclick="edit_product(0)" data-toggle="modal" data-target="#exampleModal">
-    //   <i class="fas fa-plus-circle insert-icon"></i></span>
-    //                 </div>
-    //                 </div>`;
+        var str = `<div class="col-lg-2 col-md-3 col-6 px-1 mb-2" style="height: 340px;">
+                    <div class="card text-white bg-dark h-100">
+                        <span class="icon card-img" style="margin: auto;" onclick="edit_product(0)" data-toggle="modal" data-target="#exampleModal">
+      <i class="fas fa-plus-circle insert-icon"></i></span>
+                    </div>
+                    </div>`;
         for (let index = 0; index < response["products"].length; index++) {
             const product = response["products"][index];
             const id = product["id"];
@@ -96,12 +95,12 @@ $("#product-form").submit(function (event) {
         success: function (response) {
             console.log(response);
             edit_product();
+            location.reload();
         },
         error: function (response) {
             console.log(response);
         }
     });
-    location.reload();
 });
 
 function select_product(productId) {

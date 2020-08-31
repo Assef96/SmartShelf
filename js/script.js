@@ -5,7 +5,7 @@ window.onload = function() {
 };
 window.setInterval(function() {
     load_shelf_status();
-}, 200);
+}, 100);
 
 
 function load_shelf_status() {
@@ -17,7 +17,7 @@ function load_shelf_status() {
         var time = (response['ambient']['time']);
         $("#temperature").html(temperature + "&#8451;");
         $("#humidity").html(humidity + "%");
-        $("#light").html(light + "%");
+        $("#light").html(light + "/10");
         var timeDifference = Date.now() - Date.parse(time);
         if (timeDifference < 10000)
         {
